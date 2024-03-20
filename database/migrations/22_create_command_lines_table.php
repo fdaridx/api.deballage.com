@@ -11,8 +11,8 @@ return new class extends Migration
     {
         Schema::create('command_lines', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('product_id')->constrained();
-            $table->foreignId('command_id')->constrained()->nullable();
+            $table->foreignId('product_id')->constrained()->cascadeOnDelete();
+            $table->foreignId('command_id')->nullable()->constrained()->cascadeOnDelete();;
             $table->integer('quantity');
             $table->json('attributes_values');
             $table->timestamps();

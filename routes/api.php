@@ -75,7 +75,7 @@ use Illuminate\Support\Facades\Route;
     // route pour afficher la liste des categories de produits | Contraintes: tout le monde peut acceder 
     Route::get('/categories', [CategoryController::class, 'index']); //verifié
 
-    /* route pour enregistrer une categorie de produit | Contraintes: seul le seller peut acceder 
+    /* route pour enregistrer une categorie de produit | Contraintes: admin et seller peut acceder 
     Params: categorie_id (peut etre null. c'est dans le cas ou on voudrait avooir une sous categorie), name, description,
     profile (qui est l'image),
     */ 
@@ -87,6 +87,18 @@ use Illuminate\Support\Facades\Route;
     Route::get('/categories/show', [UserController::class, 'show']); //verifié
 
 
+    /* route pour modifier une categorie de produit | Contraintes: seller et admin
+    Params:categorie_id (peut etre null. c'est dans le cas ou on voudrait avooir une sous categorie), name, description,
+    profile (qui est l'image)
+    */
+    Route::put('/categories/update', [CategoryController::class, 'update']); //verifié
+
+    /* route pour supprimer une categorie de produit | Contraintes: seller et admin
+    Params: id( de la categorie)
+    */
+    Route::delete('/categories/delete', [CategoryController::class, 'destroy']); 
+
+
 // Products
     /* route pour afficher la liste des produits | Contraintes: tout le monde 
     Params: aucun
@@ -95,10 +107,22 @@ use Illuminate\Support\Facades\Route;
 
 
     /* route pour ajouter un produits | Contraintes: seller
-    Params: categorie_id, shop_id, name, description, price, special_rice, 
+    Params: categorie_id, shop_id, name, description, price, special_price, 
     info(informations supplementaire du produit sous forme de tableau associatif Ex: ['size' => 'm', 'couleur' => 'noir',])
     */
     Route::post('/products', [ProductController::class, 'store']); //verifié
+
+    /* route pour afficher un produit | Contraintes: tout le monde
+    Params: id (du produit)
+    */
+    Route::get('/products/show', [ProductController::class, 'show']); //verifié
+
+
+    /* route pour modifier un produit | Contraintes: seller
+    Params:id(du produit à modifier), categorie_id, shop_id, name, description, price, special_price, 
+    info(informations supplementaire du produit sous forme de tableau associatif Ex: ['size' => 'm', 'couleur' => 'noir',])
+    */
+    Route::put('/products/update', [ProductController::class, 'update']); //verifié
 
 
 // Reviews
@@ -128,13 +152,15 @@ use Illuminate\Support\Facades\Route;
 
 
 
-Route::middleware(['auth:sanctum'])->group(function () {  
+Route::middleware('auth:sanctum')->group(function () {  
+    
     // CartLines
         /* route pour ajouter les produits dans le panier | Contraintes: utilisateurs uniquement
         Params: product_id, cart_id, quantity, attributesValues
         */
         Route::post('/cartlines/store', [CartLineController::class, 'store']); // verifié
 
+        
 
     // Commandes
         /* route pour initier les commandes | Contraintes: utilisateurs uniquement
@@ -150,16 +176,22 @@ Route::middleware(['auth:sanctum'])->group(function () {
         Route::post('/commandes/store', [CommandController::class, 'store']); // verifié
 
         /* route pour notifié de la confirmation de la commandes | Contraintes: sellers uniquement
-        Params: payment_id(optionel)
-        , qwater_id(pour le quartier de livraison), qwater_name(optionel), city_id(optionel), city_name(optionel), 
-        country_id(optionel), country_name(optionel), 
-        Cas d'utilisation: si qwater_id n'existe pas && city_id n'existe pas && country_id n'existe pas il faut les params
-        country_name, city_name et qwater_name afin de creer le country, city, qwater
-                           si qwater_id n'existe pas && city_id n'existe pas && country_id existe il faut les params
-        city_name et qwater_name afin de creer la city et le qwater
-                           si qwater_id n'existe pas && city_id existe il faut le param qwater_name afin de creer le qwater
+        Params: id (de la commande), state(
+            delivered pour dire que le fournisseur a livrer la commande, 
+            confirmed pour dire que le fournisseur livrera, 
+            cancel pour dire que l'utilisateur annule sa commande), message(message de la notification)
         */
-        Route::post('/commandes/state', [CartLineController::class, 'store']); // verifié
+        Route::post('/commandes/state', [CommandController::class, 'state']); 
+
+        /* route afficher l'historique des commandes de l'utilisateur | Contraintes: seul l'user concerné
+        Params: aucun
+        */
+        Route::get('commandes/users/history', [CommandController::class, 'usersHistory']); //verifié
+
+        /* route pour supprimer une commande | Contraintes: seller et admin
+        Params: id( de la categorie)
+        */
+        Route::delete('/commandes/delete', [CommandController::class, 'destroy']); 
 
 });
 

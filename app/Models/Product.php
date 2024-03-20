@@ -19,7 +19,7 @@ class Product extends Model
     }
 
     public function shop() {
-        return $this->belongsTo(Category::class);
+        return $this->belongsTo(Shop::class);
     }
 
     public function cartLine() {
@@ -27,10 +27,10 @@ class Product extends Model
     }
 
     public function commandeLine() {
-        return $this->belongsTo(CommandLine::class);
+        return $this->hasMany(CommandLine::class);
     }
 
     public function rewiews() {
-        return $this->hasMa(Rewiew::class);
+        return $this->hasMany(Rewiew::class);
     }
 }

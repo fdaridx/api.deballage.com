@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Cart;
+use App\Models\Notification;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -66,7 +67,23 @@ class UserController extends Controller
                 'message' => 'Compte existant avec cet e-mail !', 
                 'status' => 500
             ]);
-        }    
+        }   
+        
+        if ($user->type == 'seller') {
+            $message = 'Le nouveau vendeur '.$user->first_name.' '.$user->last_name.' vient de s\'inscrire sur la plateforme';
+        } 
+        else if ($user->type == 'user'){
+            $message = 'Le nouvel utilisateur '.$user->first_name.' '.$user->last_name.' vient de s\'inscrire sur la plateforme';
+        }
+        
+        foreach (User::where('type', 'admin')->get() as $u) {
+            Notification::create([
+                'user_id' => $u->id, 
+                'text' => $message, 
+                'type' => 'admin',
+                'state' => 'init',
+            ]);
+        }
     }
 
     public function show(Request $request)
@@ -155,6 +172,9 @@ class UserController extends Controller
 
             case 'disabled':
                 User::find($request->id)->update([ 'state' => 'disabled' ]);
+                if (User::find($request->id)->type == 'seller') {
+                    User::find($request->id)->shop->products->update(['state' => 'disabled']);
+                }
             break;
         }
         
@@ -191,4 +211,5 @@ class UserController extends Controller
             break;
         }
     }
+
 }

@@ -10,7 +10,7 @@ return new class extends Migration
     {
         Schema::create('cart_lines', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('product_id')->constrained();
+            $table->foreignId('product_id')->constrained()->cascadeOnDelete();
             $table->foreignId('cart_id')->constrained();
             $table->integer('quantity');
             $table->enum('state', ['init', 'enabled', 'disabled'])->default('init');

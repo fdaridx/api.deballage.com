@@ -27,9 +27,6 @@ class User extends Authenticatable
     public function shop() {
         return $this->hasOne(Shop::class)->with('products');
     }
-
-
-
     public function commandes() {
         return $this->hasMany(Command::class);
     }

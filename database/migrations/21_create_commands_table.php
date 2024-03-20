@@ -10,8 +10,8 @@ return new class extends Migration
     {
         Schema::create('commands', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('qwater_id')->constrained();
-            $table->foreignId('payment_id')->nullable()->constrained();
+            $table->foreignId('qwater_id')->constrained()->cascadeOnDelete();
+            $table->foreignId('payment_id')->nullable()->constrained()->cascadeOnDelete();
             $table->foreignId('user_id')->constrained();
             $table->enum('state', ['init', 'enabled', 'disabled']);
             $table->timestamps();

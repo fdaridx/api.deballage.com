@@ -14,7 +14,8 @@ class ProductController extends Controller
     public function index()
     {
         // if (!Gate::allows('viewAny', Auth::user())) abort(403);
-        return response()->json(Product::orderByDesc('name')->get(), 200);
+        return response()->json(Product::where('state', 'enabled')
+            ->orWhere('state', 'init')->orderByDesc('name')->get(), 200);
     }
 
     public function create()
@@ -50,7 +51,7 @@ class ProductController extends Controller
                     ]);
                 }
             }
-            return response(['message' => 'Produit enregistré avec succès !'],500);
+            return response(['message' => 'Produit enregistré avec succès !'],200);
         } else {
             return response(['message' => 'Ce produit existe déjà !'],500);
         }

@@ -4,11 +4,12 @@ namespace App\Http\Controllers;
 
 use App\Models\Cart;
 use App\Models\City;
-use App\Models\Command;
-use App\Models\CommandLine;
-use App\Models\Country;
-use App\Models\Notification;
+use App\Models\User;
 use App\Models\Qwater;
+use App\Models\Command;
+use App\Models\Country;
+use App\Models\CommandLine;
+use App\Models\Notification;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
@@ -90,6 +91,16 @@ class CommandController extends Controller
             $cartline->update(['state' => 'enabled']);
         }
 
+        // On envoie une notification a tous les admin
+        foreach (User::where('type', 'admin')->get() as $u) {
+            Notification::create([
+                'user_id' => $u->id, 
+                'text' => 'Nouvelle commande initié', 
+                'type' => 'admin',
+                'state' => 'init',
+            ]);
+        }
+
         response()->json(['message' => 'commande inité avec succès'], 200);
                 
     }
@@ -109,8 +120,53 @@ class CommandController extends Controller
         //
     }
 
-    public function destroy(Command $command)
+    public function destroy(Request $request)
     {
-        //
+        Command::find($request->id)->delete();
+        response()->json(['message' => 'Commande supprimé avec succès !'], 200);
+    }
+
+    public function usersHistory ()   
+    {
+        return response()->json(Auth::user()->commandes->where('state', 'disabled'), 200);
+    }
+
+    public function state (Request $request)   
+    {
+        $command = Command::find($request->id);
+        switch ($request->state) {
+            case 'confirmed':
+                $command->update(['state' => 'enabled']);
+                foreach ($command->user->cart->cartlines as $cartline) {
+                    $cartline->delete();
+                }
+                Notification::create([
+                    'user_id' => $command->user->id,
+                    'text' => $request->message,
+                    'type', 'user'
+                ]);
+            break;
+
+            case 'delivered':
+                $command->update(['state' => 'disabled', 'delivered_at' => now()]);
+                Notification::create([
+                    'user_id' => $command->user->id,
+                    'text' => $request->message,
+                    'type', 'user'
+                ]);
+            break;
+
+            case 'cancel':
+                foreach ($command->user->cart->cartlines as $cartline) {
+                    $cartline->update(['state' => 'init']);
+                }
+                Notification::create([
+                    'user_id' => $command->commandlines[0]->product->shop->user->id,
+                    'text' => "J'ai anuulé ma commande",
+                    'type', 'user'
+                ]);
+                $command->delete();
+            break;
+        }
     }
 }
