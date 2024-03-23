@@ -229,14 +229,13 @@ Route::middleware('auth:sanctum')->group(function () {
         Params:categorie_id (peut etre null. c'est dans le cas ou on voudrait avoir une sous categorie), name, description,
         profile (qui est l'image)
         */
-        Route::put('/categories/update/{category}', [CategoryController::class, 'update']); // ca ne marche pas
+        Route::put('/categories/update/{category}', [CategoryController::class, 'update']); // verifié
 
 
         /* route pour supprimer une categorie de produit | Contraintes: seller et admin
         Params: id( de la categorie)
         */
         Route::delete('/categories/delete/{category}', [CategoryController::class, 'destroy']); // verifié
-
 
 });
 
