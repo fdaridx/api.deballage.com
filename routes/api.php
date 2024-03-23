@@ -1,5 +1,7 @@
 <?php
 
+use App\Http\Controllers\AtributeController;
+use App\Http\Controllers\AtributeProductController;
 use App\Http\Controllers\CartController;
 use App\Http\Controllers\CartLineController;
 use App\Http\Controllers\CategoryController;
@@ -7,6 +9,7 @@ use App\Http\Controllers\CommandController;
 use App\Http\Controllers\CommandLineController;
 use App\Http\Controllers\FavoriteController;
 use App\Http\Controllers\ProductController;
+use App\Http\Controllers\PropertyController;
 use App\Http\Controllers\RewiewController;
 use App\Http\Controllers\UserController;
 use Illuminate\Support\Facades\Route;
@@ -208,7 +211,7 @@ Route::middleware('auth:sanctum')->group(function () {
 
     
     
-        // Categories de produits
+    // Categories de produits
 
         // route pour afficher la liste des categories de produits | Contraintes: tout le monde
         Route::get('/categories', [CategoryController::class, 'index']); //verifié
@@ -237,12 +240,23 @@ Route::middleware('auth:sanctum')->group(function () {
         */
         Route::delete('/categories/delete/{category}', [CategoryController::class, 'destroy']); // verifié
 
+    // Properties
+        /* route pour enregistrer une property| Contraintes: admin et seller 
+        Params: atribute_id, value
+        */ 
+        Route::post('/properties', [PropertyController::class, 'store']); //verifié
+
+    // Attributes
+        /* route pour enregistrer un attribut| Contraintes: admin et seller 
+        Params: name
+        */ 
+        Route::post('/attributes', [AtributeController::class, 'store']); //verifié
+
+    // Attribut de produit
+        /* route pour enregistrer un attribut de produit| Contraintes: admin et seller 
+        Params: atribute_id, product_id
+        */ 
+        Route::post('/attributeProducts', [AtributeProductController::class, 'store']); //verifié
 });
-
-
-
-
-
-
 
 

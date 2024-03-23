@@ -2,63 +2,70 @@
 
 namespace App\Http\Controllers;
 
+use Illuminate\Http\Request;
 use App\Models\AtributeProduct;
 use App\Http\Requests\StoreAtributeProductRequest;
 use App\Http\Requests\UpdateAtributeProductRequest;
 
 class AtributeProductController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
+
     public function index()
     {
         //
     }
 
-    /**
-     * Show the form for creating a new resource.
-     */
     public function create()
     {
         //
     }
 
-    /**
-     * Store a newly created resource in storage.
-     */
-    public function store(StoreAtributeProductRequest $request)
+    public function store(Request $request)
     {
-        //
+        $messages = [];
+        if ($request->atribute_id == null || empty($request->atribute_id)) {
+            $messages[] = "Veuillez renseigner un attribut";
+        }
+
+        if ($request->product_id == null || empty($request->atribute_id)) {
+            $messages[] = "Veuillez renseigner un produit";
+        }
+
+        if (count($messages) == 0) {
+            $atributeProduct = AtributeProduct::firstOrCreate([
+                'atribute_id' => $request->atribute_id,
+                'product_id' => $request->product_id,
+            ], [
+                'atribute_id' => $request->atribute_id,
+                'product_id' => $request->product_id,
+            ]);
+
+            if ($atributeProduct->wasRecentlyCreated) {
+                return response()->json(['message' => 'Attribut de produit crée avec succès !'], 500);
+            } else {
+                return response()->json(['message' => 'Cet Attribut pour ce produit existe déjà !'], 500);
+            }
+            
+        } else {
+            return response()->json(['messages' => $messages], 500);
+        }
     }
 
-    /**
-     * Display the specified resource.
-     */
     public function show(AtributeProduct $atributeProduct)
     {
         //
     }
 
-    /**
-     * Show the form for editing the specified resource.
-     */
     public function edit(AtributeProduct $atributeProduct)
     {
         //
     }
 
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(UpdateAtributeProductRequest $request, AtributeProduct $atributeProduct)
+    public function update(Request $request, AtributeProduct $atributeProduct)
     {
         //
     }
 
-    /**
-     * Remove the specified resource from storage.
-     */
     public function destroy(AtributeProduct $atributeProduct)
     {
         //

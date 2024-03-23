@@ -10,8 +10,8 @@ return new class extends Migration
     {
         Schema::create('settings', function (Blueprint $table) {
             $table->id();
-            $table->string('nom');
-            $table->string('valeur');
+            $table->string('name');
+            $table->string('value');
             $table->timestamps();
         });
     }

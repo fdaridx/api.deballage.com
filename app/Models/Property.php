@@ -8,4 +8,9 @@ use Illuminate\Database\Eloquent\Model;
 class Property extends Model
 {
     use HasFactory;
+    protected $filable = ['atribute_id', 'value'];
+
+    public function attribute() {
+        return $this->belongsTo(Atribute::class);
+    }
 }

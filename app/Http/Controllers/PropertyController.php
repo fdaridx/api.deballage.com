@@ -3,62 +3,68 @@
 namespace App\Http\Controllers;
 
 use App\Models\Property;
-use App\Http\Requests\StorePropertyRequest;
-use App\Http\Requests\UpdatePropertyRequest;
+use Illuminate\Http\Request;
 
 class PropertyController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
+   
     public function index()
     {
         //
     }
 
-    /**
-     * Show the form for creating a new resource.
-     */
+ 
     public function create()
     {
         //
     }
 
-    /**
-     * Store a newly created resource in storage.
-     */
-    public function store(StorePropertyRequest $request)
+    public function store(Request $request)
     {
-        //
+        $messages = [];
+        if ($request->atribute_id == null || empty($request->atribute_id)) {
+            $messages[] = "Veuillez renseigner un attribut";
+        }
+
+        if ($request->value == null || empty($request->atribute_id)) {
+            $messages[] = "Veuillez renseigner une valeur";
+        }
+
+        if (count($messages) == 0) {
+            $property = Property::firstOrCreate([
+                'atribute_id' => $request->atribute_id,
+                'value' => strtolower($request->value),
+            ], [
+                'atribute_id' => $request->atribute_id,
+                'value' => strtolower($request->value),
+            ]);
+
+            if ($property->wasRecentlyCreated) {
+                response()->json(['message' => 'Propriété crée avec succès !'], 500);
+            } else {
+                response()->json(['message' => 'Cette propriété existe déjà !'], 500);
+            }
+            
+        } else {
+            return response()->json(['messages' => $messages], 500);
+        }
     }
 
-    /**
-     * Display the specified resource.
-     */
     public function show(Property $property)
     {
         //
     }
 
-    /**
-     * Show the form for editing the specified resource.
-     */
     public function edit(Property $property)
     {
         //
     }
 
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(UpdatePropertyRequest $request, Property $property)
+    public function update(Request $request, Property $property)
     {
         //
     }
 
-    /**
-     * Remove the specified resource from storage.
-     */
     public function destroy(Property $property)
     {
         //

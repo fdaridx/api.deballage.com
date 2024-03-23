@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
@@ -32,5 +33,9 @@ class Product extends Model
 
     public function rewiews() {
         return $this->hasMany(Rewiew::class);
+    }
+
+    public function attributes() {
+        return $this->belongsToMany(Attribute::class);
     }
 }

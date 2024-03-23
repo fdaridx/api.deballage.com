@@ -11,7 +11,7 @@ return new class extends Migration
     {
         Schema::create('subscriptions', function (Blueprint $table) {
             $table->id();
-            $table->string('telephone');
+            $table->string('phone_number');
             $table->timestamps();
             $table->softDeletes();
         });
