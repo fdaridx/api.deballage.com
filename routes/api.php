@@ -4,6 +4,7 @@ use App\Http\Controllers\CartController;
 use App\Http\Controllers\CartLineController;
 use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\CommandController;
+use App\Http\Controllers\CommandLineController;
 use App\Http\Controllers\FavoriteController;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\RewiewController;
@@ -30,18 +31,14 @@ use Illuminate\Support\Facades\Route;
     /* route pour recuperer un utilisateur grace à son id | Contraintes: seulement l'admin peut acceder 
     Params: id
     */
-    Route::get('/users/show', [UserController::class, 'show']); 
+    Route::get('/users/show/{user}', [UserController::class, 'show']); 
 
     /* route pour modifier les information d'un utilisateur | Contraintes: tout le monde à condition que l'action soit pour soi 
     Params: first_name, last_name, state, type(user ou seller), phone, gender(masculin ou feminin), email, password, info
     */
-    Route::put('/users/update', [UserController::class, 'update']); 
+    Route::put('/users/update/{user}', [UserController::class, 'update']); 
 
-    /* route pour changer le mot de passe d'un utilisateur grace à son id | Contraintes: tout le monde à condition que l'action soit pour soi 
-    Params: new_password
-    */
-    Route::put('/users/change_password', [UserController::class, 'password']); //verifié
-
+    
     /* route pour changer l'etat d'un compte utilisateur | Contraintes: seulement l'admin peut acceder 
     Params: status
     Cas d'utilisation: si status = false le champ state de la table utilsateur sera 'refuse' cela signifie que l'admin desapprouve la création du compte
@@ -67,36 +64,13 @@ use Illuminate\Support\Facades\Route;
     /* route pour se deconnecter | Contraintes: tout le monde
     Params: id (de l'utilisateur)
     */
-    Route::get('/logout/{id}', [UserController::class, 'logout']); //verifié
+    Route::get('/logout/{user}', [UserController::class, 'logout']); //verifié
 
 
-
-// Categories de produits
-    // route pour afficher la liste des categories de produits | Contraintes: tout le monde peut acceder 
-    Route::get('/categories', [CategoryController::class, 'index']); //verifié
-
-    /* route pour enregistrer une categorie de produit | Contraintes: admin et seller peut acceder 
-    Params: categorie_id (peut etre null. c'est dans le cas ou on voudrait avooir une sous categorie), name, description,
-    profile (qui est l'image),
-    */ 
-    Route::post('/categories', [CategoryController::class, 'store']); //verifié
-
-    /* route pour recuperer une categorie de produit grace à son id | Contraintes: seul le seller peut acceder 
-    Params: id
-    */ 
-    Route::get('/categories/show', [UserController::class, 'show']); //verifié
-
-
-    /* route pour modifier une categorie de produit | Contraintes: seller et admin
-    Params:categorie_id (peut etre null. c'est dans le cas ou on voudrait avooir une sous categorie), name, description,
-    profile (qui est l'image)
+    /* route pour supprimer un user | Contraintes: tout le monde
+    Params: id (de l'utilisateur)
     */
-    Route::put('/categories/update', [CategoryController::class, 'update']); //verifié
-
-    /* route pour supprimer une categorie de produit | Contraintes: seller et admin
-    Params: id( de la categorie)
-    */
-    Route::delete('/categories/delete', [CategoryController::class, 'destroy']); 
+    Route::delete('/users/delete/{user}', [UserController::class, 'destroy']); //verifié
 
 
 // Products
@@ -115,14 +89,22 @@ use Illuminate\Support\Facades\Route;
     /* route pour afficher un produit | Contraintes: tout le monde
     Params: id (du produit)
     */
-    Route::get('/products/show', [ProductController::class, 'show']); //verifié
+    Route::get('/products/show/{product}', [ProductController::class, 'show']); //verifié
+
+
+    /* route pour afficher les produits en fonction d'un champ | Contraintes: tout le monde
+    Params: option (qui est un tableau par Ex si on veut les produits appartenant à une categorie option aura comme contenu
+    ['categorie_id' => 1])
+    */
+    Route::get('/products/options/{option}', [ProductController::class, 'option']); //verifié
+
 
 
     /* route pour modifier un produit | Contraintes: seller
     Params:id(du produit à modifier), categorie_id, shop_id, name, description, price, special_price, 
     info(informations supplementaire du produit sous forme de tableau associatif Ex: ['size' => 'm', 'couleur' => 'noir',])
     */
-    Route::put('/products/update', [ProductController::class, 'update']); //verifié
+    Route::put('/products/update/{product}', [ProductController::class, 'update']); //verifié
 
 
 // Reviews
@@ -154,6 +136,15 @@ use Illuminate\Support\Facades\Route;
 
 Route::middleware('auth:sanctum')->group(function () {  
     
+    // Users
+        /* route pour changer le mot de passe d'un utilisateur grace à son id | Contraintes: tout le monde à condition que l'action soit pour soi et l'admin
+        Params: old(optionnel si c'est l'admin qui veut changer), new, user(optionnel si c'est user ou seller)
+        Cas d'utilisation si user existe (c'a'd l'id de l'admin) alors on a pas à old tu attributs null dans la requete car l'admin n'a pas besoin de l'anien mot de passe
+                          sinon on compare old avec le password du user authentifié
+        */
+        Route::put('/users/change_password/{old?}/{new}/{user?}', [UserController::class, 'password']); //verifié
+
+
     // CartLines
         /* route pour ajouter les produits dans le panier | Contraintes: utilisateurs uniquement
         Params: product_id, cart_id, quantity, attributesValues
@@ -163,6 +154,15 @@ Route::middleware('auth:sanctum')->group(function () {
         
 
     // Commandes
+        /* route pour la liste des commandes | Contraintes: admin et seller
+        Params: state(optionel et prend les valeurs init, enabled et diasbled)
+        Cas d'utilisation: si state n'existe pas alors toutes les commandes sont renvoyées
+                           sinon les commandes dont le state est renseign"e seront renvoyés
+        */
+
+        Route::get('/commandes/{state?}', [CommandController::class, 'index']); // verifié
+
+
         /* route pour initier les commandes | Contraintes: utilisateurs uniquement
         Params: payment_id(optionel)
         , qwater_id(pour le quartier de livraison), qwater_name(optionel), city_id(optionel), city_name(optionel), 
@@ -173,15 +173,7 @@ Route::middleware('auth:sanctum')->group(function () {
         city_name et qwater_name afin de creer la city et le qwater
                            si qwater_id n'existe pas && city_id existe il faut le param qwater_name afin de creer le qwater
         */
-        Route::post('/commandes/store', [CommandController::class, 'store']); // verifié
-
-        /* route pour notifié de la confirmation de la commandes | Contraintes: sellers uniquement
-        Params: id (de la commande), state(
-            delivered pour dire que le fournisseur a livrer la commande, 
-            confirmed pour dire que le fournisseur livrera, 
-            cancel pour dire que l'utilisateur annule sa commande), message(message de la notification)
-        */
-        Route::post('/commandes/state', [CommandController::class, 'state']); 
+        Route::post('/commandes', [CommandController::class, 'store']); // verifié
 
         /* route afficher l'historique des commandes de l'utilisateur | Contraintes: seul l'user concerné
         Params: aucun
@@ -192,6 +184,59 @@ Route::middleware('auth:sanctum')->group(function () {
         Params: id( de la categorie)
         */
         Route::delete('/commandes/delete', [CommandController::class, 'destroy']); 
+
+    // CommandsLines
+        /* route pour ajouter un produit à une commande sans passer par le panier | Contraintes: user, seller et admin
+        Params: quantity, product_id, attributes_values(s'il y'en a) et id (pour la commande)
+        */
+        Route::post('/commandeslines', [CommandLineController::class, 'store']);  // verifié
+
+
+        /* route pour modifier une ligne de commande | Contraintes: user, seller et admin
+        Params: quantity, product_id, attributes_values(s'il y'en a) et id (pour la commande)
+        */
+        Route::put('/commandeslines/update/{commandLine}', [CommandLineController::class, 'update']);  // verifié
+
+
+        /* route pour notifié de la confirmation de la commandes | Contraintes: sellers et admin
+        Params: id (de la ligne de commande), state(
+            delivered pour dire que le fournisseur a livrer la commande, 
+            confirmed pour dire que le fournisseur livrera, 
+            cancel pour dire que l'utilisateur annule sa commande), message(message de la notification)
+        */
+        Route::post('/commandeslines/state', [CommandLineController::class, 'state']);  // verifié
+
+    
+    
+        // Categories de produits
+
+        // route pour afficher la liste des categories de produits | Contraintes: tout le monde
+        Route::get('/categories', [CategoryController::class, 'index']); //verifié
+
+        /* route pour enregistrer une categorie de produit | Contraintes: admin et seller 
+        Params: categorie_id (peut etre null. c'est dans le cas ou on voudrait avoir une sous categorie), name, description,
+        profile (qui est l'image),
+        */ 
+        Route::post('/categories', [CategoryController::class, 'store']); //verifié
+
+        /* route pour recuperer une categorie de produit grace à son id | Contraintes: seul le seller peut acceder 
+        Params: id
+        */ 
+        Route::get('/categories/show/{category}', [CategoryController::class, 'show']); //verifié
+
+
+        /* route pour modifier une categorie de produit | Contraintes: seller et admin
+        Params:categorie_id (peut etre null. c'est dans le cas ou on voudrait avoir une sous categorie), name, description,
+        profile (qui est l'image)
+        */
+        Route::put('/categories/update/{category}', [CategoryController::class, 'update']); // ca ne marche pas
+
+
+        /* route pour supprimer une categorie de produit | Contraintes: seller et admin
+        Params: id( de la categorie)
+        */
+        Route::delete('/categories/delete/{category}', [CategoryController::class, 'destroy']); // verifié
+
 
 });
 

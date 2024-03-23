@@ -2,7 +2,6 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Cart;
 use App\Models\City;
 use App\Models\User;
 use App\Models\Qwater;
@@ -15,9 +14,10 @@ use Illuminate\Support\Facades\Auth;
 
 class CommandController extends Controller
 {
-    public function index()
+    public function index($state = null)
     {
-        //
+        return $state ? response()->json(Command::where('state', $state)::with('commandlines')->get(), 200) 
+        : response()->json(Command::with('commandlines')->get(), 200);
     }
 
     public function create()
@@ -27,38 +27,71 @@ class CommandController extends Controller
 
     public function store(Request $request)
     {
+        $messages = [];
         $qwater = $city = $country = $commande = null;
 
         // Ce bloc de code a pour objectif de creer le quartier et passer la  commande
         if($request->qwater_id == null || empty($request->qwater_id)) {
             if ($request->city_id == null || empty($request->city_id)) {
                 if ($request->country_id == null || empty($request->country_id)) {
-                    $country = Country::create(['name' => $request->country_name]);
-                    $city = City::create([
-                        'name' => $request->city_name, 
-                        'countrie_id' => $country->id 
-                    ]);
-                    $qwater = Qwater::create([
-                        'name' => $request->qwater_name, 
-                        'citie_id' => $city->id 
-                    ]);
+                    if (!self::validate($request->country_name, 'string', null, 3)) $messages[] = 'Nom de pays incorrect';
+                    if (!self::validate($request->city_name, 'string', null, 3)) $messages[] = 'Nom de ville incorrect';
+                    if (!self::validate($request->qwater_name, 'string', null, 3)) $messages[] = 'Nom de quartier incorrect';
+                    
+                    if (count($messages)  == 0) {
+                        $country = Country::firstOrCreate(['name' => $request->country_name]);
+                        if($country->wasRecentlyCreated){
+                            $city = City::firstOrCreate([
+                                'name' => $request->city_name, 
+                                'countrie_id' => $country->id 
+                            ]);
+                            if ($city->wasRecentlyCreated) {
+                                $qwater = Qwater::firstOrCreate([
+                                    'name' => $request->qwater_name, 
+                                    'citie_id' => $city->id 
+                                ]);
+                                if(!$qwater->wasRecentlyCreated)return response()->json(['messages' => 'Ce quartier existe déjà'], 500);
+                            } else {
+                                return response()->json(['messages' => 'Cette ville existe déjà'], 500);
+                            }
+                        }
+                        else {
+                            return response()->json(['messages' => 'Ce pays existe déjà'], 500);
+                        }
+                    } else {
+                        return response()->json(['messages' => $messages], 500);
+                    } 
                 }
                 else {
-                    $city = City::create([
-                        'name' => $request->city_name, 
-                        'countrie_id' => $request->country_id
-                    ]);
-                    $qwater = Qwater::create([
-                        'name' => $request->qwater_name, 
-                        'citie_id' => $city->id 
-                    ]);
+                    if (!self::validate($request->city_name, 'string', null, 3)) $messages[] = 'Nom de ville incorrect';
+                    if (!self::validate($request->qwater_name, 'string', null, 3)) $messages[] = 'Nom de quartier incorrect';
+                    
+                    if (count($messages)  == 0) {
+                        $city = City::firstOrCreate([
+                            'name' => $request->city_name, 
+                            'countrie_id' => $request->country_id
+                        ]);
+                        if ($city->wasRecentlyCreated) {
+                            $qwater = Qwater::firstOrCreate([
+                                'name' => $request->qwater_name, 
+                                'citie_id' => $city->id 
+                            ]);
+                            if(!$qwater->wasRecentlyCreated) return response()->json(['messages' => 'Ce quartier existe déjà'], 500);
+                        } else {
+                            return response()->json(['messages' => 'Cette ville existe déjà'], 500);
+                        }
+                    } else {
+                        return response()->json(['messages' => $messages], 500);
+                    } 
+                    
                 }
             }
             else {
-                $qwater = Qwater::create([
+                $qwater = Qwater::firstOrCreate([
                     'name' => $request->qwater_name, 
-                    'citie_id' => $request->city_id,
+                    'citie_id' => $request->city_id
                 ]);
+                if(!$qwater->wasRecentlyCreated) return response()->json(['messages' => 'Ce quartier existe déjà'], 500);
             }
 
             $commande = Command::create([
@@ -80,29 +113,37 @@ class CommandController extends Controller
 
         // Une fois la commande crée on doit chargé les produits commandés dans la commande
         // Pour cela on se sert du panier et on recupera toutes les lignes du panier qu'on chargera dans la commande
-        foreach (Auth::user()->cart->cartlines as $cartline) {
+        foreach (Auth::user()->cart->cartlines->where('state', 'init') as $cartline) {
             CommandLine::create([
                 'product_id' => $cartline->product_id, 
                 'command_id' => $commande->id, 
                 'quantity' => $cartline->quantity, 
                 'attributes_values' =>  $cartline->attributesValues, 
             ]);
-            // Je modifie l'etat des lignes du panier à enabled car la commande n'a pas encore ete validé
-            $cartline->update(['state' => 'enabled']);
-        }
 
-        // On envoie une notification a tous les admin
-        foreach (User::where('type', 'admin')->get() as $u) {
+            // Modification des etats des lignes du panier à enabled car la commande n'a pas encore ete validé
+            $cartline->update(['state' => 'enabled']);
+
+            // On envoie une notif a chaque vendeur
             Notification::create([
-                'user_id' => $u->id, 
+                'user_id' => $cartline->product->shop->user_id, 
                 'text' => 'Nouvelle commande initié', 
                 'type' => 'admin',
                 'state' => 'init',
             ]);
         }
 
-        response()->json(['message' => 'commande inité avec succès'], 200);
-                
+        // On envoie une notification aux admin
+        foreach (User::where('type', 'admin')->get() as $user) {
+            Notification::create([
+                'user_id' => $user->id, 
+                'text' => 'Nouvelle commande initié', 
+                'type' => 'admin',
+                'state' => 'init',
+            ]);
+        }
+
+        return response()->json(['message' => 'commande inité avec succès'], 200);      
     }
 
     public function show(Command $command)
@@ -123,7 +164,7 @@ class CommandController extends Controller
     public function destroy(Request $request)
     {
         Command::find($request->id)->delete();
-        response()->json(['message' => 'Commande supprimé avec succès !'], 200);
+        return response()->json(['message' => 'Commande supprimé avec succès !'], 200);
     }
 
     public function usersHistory ()   
@@ -131,42 +172,4 @@ class CommandController extends Controller
         return response()->json(Auth::user()->commandes->where('state', 'disabled'), 200);
     }
 
-    public function state (Request $request)   
-    {
-        $command = Command::find($request->id);
-        switch ($request->state) {
-            case 'confirmed':
-                $command->update(['state' => 'enabled']);
-                foreach ($command->user->cart->cartlines as $cartline) {
-                    $cartline->delete();
-                }
-                Notification::create([
-                    'user_id' => $command->user->id,
-                    'text' => $request->message,
-                    'type', 'user'
-                ]);
-            break;
-
-            case 'delivered':
-                $command->update(['state' => 'disabled', 'delivered_at' => now()]);
-                Notification::create([
-                    'user_id' => $command->user->id,
-                    'text' => $request->message,
-                    'type', 'user'
-                ]);
-            break;
-
-            case 'cancel':
-                foreach ($command->user->cart->cartlines as $cartline) {
-                    $cartline->update(['state' => 'init']);
-                }
-                Notification::create([
-                    'user_id' => $command->commandlines[0]->product->shop->user->id,
-                    'text' => "J'ai anuulé ma commande",
-                    'type', 'user'
-                ]);
-                $command->delete();
-            break;
-        }
-    }
 }

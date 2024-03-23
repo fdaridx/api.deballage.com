@@ -12,7 +12,7 @@ return new class extends Migration
             $table->id();
             $table->foreignId('qwater_id')->constrained()->cascadeOnDelete();
             $table->foreignId('payment_id')->nullable()->constrained()->cascadeOnDelete();
-            $table->foreignId('user_id')->constrained();
+            $table->foreignId('user_id')->constrained()->cascadeOnDelete();
             $table->enum('state', ['init', 'enabled', 'disabled']);
             $table->timestamps();
             $table->timestamp('delivered_at')->nullable();

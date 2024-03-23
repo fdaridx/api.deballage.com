@@ -26,64 +26,96 @@ class ProductController extends Controller
     public function store(Request $request)
     {
         // if (!Gate::allows('store', Auth::user())) abort(403);
-        $product = Product::where([
-            'categorie_id' => $request->name,
-            'name' => $request->name,
-        ])->get();
+        $messages = [];
+        if (!self::validate($request->name, 'string', null, 3)) $messages[] = 'Nom incorrect';
+        if (!self::validate($request->description, 'string', null, 3)) $messages[] = 'Description incorrect';
 
-        if ($product->isEmpty()) {
-            $product = Product::create([
+        if (count($messages) == 0) {
+            $product = Product::where([
                 'categorie_id' => $request->categorie_id,
-                'shop_id' => $request->shop_id,
                 'name' => $request->name,
-                'description' => $request->description ?? '',
-                'state' => 'init',
-                'price' => $request->price,
-                'special_price' => $request->special_rice ?? null,
-                'info'  => $request->info  ?? [],
-            ]);
-
-            if ($request->images !== null || !empty($request->images)) {
-                foreach ($request->images as $image) {
-                    Image::create([
-                        'product_id' => $product->id,
-                        'path' => Storage::putFile('Product_image', $request->file($image)),
-                    ]);
+            ])->get();
+    
+            if ($product->isEmpty()) {
+                $product = Product::create([
+                    'categorie_id' => $request->categorie_id,
+                    'shop_id' => $request->shop_id,
+                    'name' => $request->name,
+                    'description' => $request->description ?? '',
+                    'state' => 'init',
+                    'price' => $request->price,
+                    'special_price' => $request->special_rice ?? null,
+                    'info'  => $request->info  ?? [],
+                ]);
+    
+                if ($request->images !== null || !empty($request->images)) {
+                    foreach ($request->images as $image) {
+                        Image::create([
+                            'product_id' => $product->id,
+                            'path' => Storage::putFile('Product_image', $request->file($image)),
+                        ]);
+                    }
                 }
+                return response(['message' => 'Produit enregistré avec succès !'],200);
+            } else {
+                return response(['message' => 'Ce produit existe déjà !'],500);
             }
-            return response(['message' => 'Produit enregistré avec succès !'],200);
         } else {
-            return response(['message' => 'Ce produit existe déjà !'],500);
-        }
-        
+            return response()->json(['message' => $messages], 500);
+        }     
             
     }
 
-    public function show(Request $request)
+    public function show(Product $product)
     {
-        return response()->json(Product::find($request->id), 200);
+        return response()->json($product, 200);
     }
 
     public function edit(Request $request)
     {
-        // if (!Gate::allows('edit', Auth::user())) abort(403);
-        return response()->json(Product::find($request->id), 200);
+        
     }
 
-    public function update(Request $request)
+    public function update(Request $request, Product $product)
     {
-        $product = Product::find($request->id);
-        $product->update([
-            'categorie_id' => $request->categorie_id ?? $product->categorie_id,
-            'shop_id' => $request->shop_id ?? $product->shop_id,
-            'name' => $request->name ?? $product->name,
-            'description' => $request->description ?? $product->description,
-            'state' => $request->state ?? $product->state,
-            'price' => $request->price ?? $product->price,
-            'special_rice' => $request->special_rice ?? $product->special_rice,
-            'info'  => $request->info ?? $product->info,
-        ]);
-        return response()->json(['message' => 'Produit modifié avec succès !'], 200);
+        $messages = [];
+        if (!self::validate($request->name, 'string', null, 3)) $messages[] = 'Nom incorrect';
+        if (!self::validate($request->description, 'string', null, 3)) $messages[] = 'Description incorrect';
+
+        if (count($messages) == 0) {
+            $product = Product::where([
+                'categorie_id' => $request->categorie_id,
+                'name' => $request->name,
+            ])->get();
+    
+            if ($product->isEmpty()) {
+                $product->update([
+                    'categorie_id' => $request->categorie_id,
+                    'shop_id' => $request->shop_id,
+                    'name' => $request->name,
+                    'description' => $request->description,
+                    'state' => 'enabled',
+                    'price' => $request->price,
+                    'special_price' => $request->special_price,
+                    'info'  => $request->info ?? [],
+                ]);
+                
+    
+                if ($request->images !== null || !empty($request->images)) {
+                    foreach ($request->images as $image) {
+                        Image::create([
+                            'product_id' => $product->id,
+                            'path' => Storage::putFile('Product_image', $request->file($image)),
+                        ]);
+                    }
+                }
+                return response()->json(['message' => 'Produit modifié avec succès !'], 200);
+            } else {
+                return response(['message' => 'Ce produit existe déjà !'],500);
+            }
+        } else {
+            return response()->json(['message' => $messages], 500);
+        }  
     }
 
     public function destroy(Request $request)
@@ -91,5 +123,10 @@ class ProductController extends Controller
         // if (!Gate::allows('delete', Auth::user())) abort(403);
         Product::find($request->id)->delete();
         return response()->json(['message' => 'Produit supprimé avec succès !'], 200);
+    }
+
+    public function option($option)
+    {
+        return response()->json(Product::where($option)->get(), 200);
     }
 }

@@ -15,7 +15,9 @@ return new class extends Migration
             $table->foreignId('command_id')->nullable()->constrained()->cascadeOnDelete();;
             $table->integer('quantity');
             $table->json('attributes_values');
+            $table->enum('state', ['init', 'enabled', 'disabled'])->default('init');
             $table->timestamps();
+            $table->timestamp('delivered_at')->nullable();
             $table->softDeletes();
         });
     }

@@ -8,7 +8,7 @@ use Illuminate\Database\Eloquent\Model;
 class CommandLine extends Model
 {
     use HasFactory;
-    protected $fillable = [ 'product_id', 'command_id', 'quantity', 'attributes_values' ];
+    protected $fillable = [ 'product_id', 'command_id', 'quantity', 'attributes_values', 'delivered_at', 'state' ];
 
     protected $casts = [ 'attributes_values' => 'json' ];
 

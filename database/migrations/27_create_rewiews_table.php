@@ -12,7 +12,7 @@ return new class extends Migration
         Schema::create('rewiews', function (Blueprint $table) {
             $table->id();
             $table->foreignId('product_id')->nullable()->constrained()->cascadeOnDelete();
-            $table->foreignId('shop_id')->nullable()->constrained();
+            $table->foreignId('shop_id')->nullable()->constrained()->cascadeOnDelete();
             $table->integer('rating');
             $table->string('text');
             $table->timestamps();

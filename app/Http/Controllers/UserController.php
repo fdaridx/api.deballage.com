@@ -25,36 +25,68 @@ class UserController extends Controller
 
     public function store(Request $request)
     {
-        $user = User::where( 'email', strtolower($request->email) )->first();
-        if (!isset($user)) {
-            $user = User::create([
-                'first_name' => $request->first_name,
-                'last_name' => $request->last_name,
-                'state' => 'init',
-                'type' => $request->type,
-                'phone' => $request->phone,
-                'gender' => $request->gender,
-                'email' => $request->email,
-                'password' => $request->password,
-                'info' => $request->info ?? [],
-            ]);
-            // On recherche s'il existe un panier avec l'id de la session de l'utilisateur
-            $cart = Cart::where('session_id', $request->session_id)->first();
+        $messages = [];
+        if (!self::validate($request->first_name, 'string', null, 3)) $messages[] = 'Nom incorrect';
+        if (!self::validate($request->last_name, 'string', null, 3)) $messages[] = 'Prenom incorrect';
+        if (!self::validate(intval($request->phone), 'integer', null, 9)) $messages[] = 'Numero de télephone incorrect';
+        if (!self::validate($request->password, null, null, 4)) $messages[] = 'Le mot de passe doit avoir au moins 4 characteres';
+        if (!self::validate($request->email, 'string', 'email')) $messages[] = 'Adresse e-mail incorrect';
 
-            // Si c'est vide cela signifie que c'est ca premiere fois d'arriver sur le site
-            // Sinon il est deja venu et la on attribue juste son id au panier
+        // $request->gender !== 'masculin' && $request->gender !== 'feminin' ?: $messages[] = 'Adresse e-mail incorrect';
+        if (count($messages) == 0) {
+            $user = User::where( 'email', strtolower($request->email) )->first();
 
-            if (!isset($cart)) {
-                Cart::create([
-                    'user_id' => $user->id,
-                    'session_id' => $request->session_id
+            if (!isset($user)) {
+                $user = User::create([
+                    'first_name' => strtolower($request->first_name),
+                    'last_name' =>strtolower($request->last_name),
+                    'state' => 'init',
+                    'type' => strtolower($request->type),
+                    'phone' => intval($request->phone),
+                    'gender' => strtolower($request->gender),
+                    'email' => strtolower($request->email),
+                    'password' => $request->password,
+                    'info' => $request->info ?? [],
+                ]);
+                // On recherche s'il existe un panier avec l'id de la session de l'utilisateur
+                $cart = Cart::where('session_id', $request->session_id)->first();
+    
+                // Si c'est vide cela signifie que c'est ca premiere fois d'arriver sur le site
+                // Sinon il est deja venu et la on attribue juste son id au panier
+    
+                if (!isset($cart)) {
+                    Cart::create([
+                        'user_id' => $user->id,
+                        'session_id' => $request->session_id
+                    ]);
+                }
+                else {
+                    $cart->update(['user_id' => $user->id]);
+                }
+            } 
+            else {
+                return response()->json([
+                    'message' => 'Compte existant avec cet e-mail !', 
+                    'status' => 500
+                ]);
+            }   
+            
+            if ($user->type == 'seller') {
+                $message = 'Le nouveau vendeur '.$user->first_name.' '.$user->last_name.' vient de s\'inscrire sur la plateforme';
+            } 
+            else if ($user->type == 'user'){
+                $message = 'Le nouvel utilisateur '.$user->first_name.' '.$user->last_name.' vient de s\'inscrire sur la plateforme';
+            }
+            
+            foreach (User::where('type', 'admin')->get() as $u) {
+                Notification::create([
+                    'user_id' => $u->id, 
+                    'text' => $message, 
+                    'type' => 'admin',
+                    'state' => 'init',
                 ]);
             }
-            else {
-                $cart->update(['user_id' => $user->id]);
-            }
-
-            
+    
             // On génère un token pour le nouvel utilisateur
             $token = $user->createToken('authToken');
             return response()->json([
@@ -62,34 +94,18 @@ class UserController extends Controller
                 'access_token' => $token->plainTextToken,
                 'token_type' => 'bearer'
             ], 200);
-        } else {
-            return response()->json([
-                'message' => 'Compte existant avec cet e-mail !', 
-                'status' => 500
-            ]);
-        }   
-        
-        if ($user->type == 'seller') {
-            $message = 'Le nouveau vendeur '.$user->first_name.' '.$user->last_name.' vient de s\'inscrire sur la plateforme';
         } 
-        else if ($user->type == 'user'){
-            $message = 'Le nouvel utilisateur '.$user->first_name.' '.$user->last_name.' vient de s\'inscrire sur la plateforme';
-        }
-        
-        foreach (User::where('type', 'admin')->get() as $u) {
-            Notification::create([
-                'user_id' => $u->id, 
-                'text' => $message, 
-                'type' => 'admin',
-                'state' => 'init',
-            ]);
+        else {
+            return response()->json([
+                'messages' => $messages,
+            ], 500);
         }
     }
 
-    public function show(Request $request)
+    public function show(User $user)
     {
         // if (!Gate::allows('show', $request->user())) abort(403);
-        return response()->json(User::find($request->id), 200);
+        return response()->json($user, 200);
     }
 
     public function edit(Request $request)
@@ -98,64 +114,90 @@ class UserController extends Controller
         // return response()->json($request->user(), 200);
     }
 
-    public function update(Request $request, string $id)
+    public function update(Request $request, User $user)
     {
-        $user = User::where( 'email', strtolower($request->email) )->first();
-        if (!isset($user)) {
-            $user = User::create([
-                'first_name' => $request->first_name,
-                'last_name' => $request->last_name,
+        $messages = [];
+
+        if (!self::validate($request->first_name, 'string', null, 3)) $messages[] = 'Nom incorrect';
+        if (!self::validate($request->last_name, 'string', null, 3)) $messages[] = 'Prenom incorrect';
+        if (!self::validate(intval($request->phone), 'integer', null, 9)) $messages[] = 'Numero de télephone incorrect';
+        if (!self::validate($request->password, null, null, 4)) $messages[] = 'Le mot de passe doit avoir au moins 4 characteres';
+        if (!self::validate($request->email, 'string', 'email')) $messages[] = 'Adresse e-mail incorrect';
+
+        if (count($messages) == 0) {
+            $user->update([
+                'first_name' => strtolower($request->first_name),
+                'last_name' =>strtolower($request->last_name),
                 'state' => 'init',
-                'type' => $request->type,
-                'phone' => $request->phone,
-                'gender' => $request->gender,
-                'email' => $request->email,
+                'type' => strtolower($request->type),
+                'phone' => intval($request->phone),
+                'gender' => strtolower($request->gender),
+                'email' => strtolower($request->email),
                 'password' => $request->password,
                 'info' => $request->info ?? [],
             ]);
             return response()->json(['message' => 'Utilisateur modifié avec succès'], 200);
-        }
+        } 
         else {
-            return response()->json(['message' => 'Cet e-mail existe déjà en base de donnée'], 500);
+            return response()->json([
+                'messages' => $messages,
+            ], 500);
         }
     }
 
-    public function destroy(Request $request)
+    public function destroy(User $user)
     {
         // if (!Gate::allows('delete', $request->user())) abort(403);
-        User::find($request->id)->delete();
-        return response(200); 
+        $user->delete();
+        return response(['message' => 'Utilisateur supprimé avec succès !'], 200);
     }
 
     public function authenticate(Request $request)
     {
-        $credentials = $request->validate([
-            'email' => 'required|email',
-            'password' => 'required',
-        ]);
+        $messages = [];
 
-        if (!Auth::attempt($credentials)) {
-            return response()->json(['message' => 'Identifiants incorrect !'], 401);
+        if (!self::validate($request->password, null, null, 4)) $messages[] = 'Le mot de passe doit avoir au moins 4 characteres';
+        if (!self::validate($request->email, 'string', 'email')) $messages[] = 'Adresse e-mail incorrect';
+        
+        if(count($messages) == 0){
+            if (!Auth::attempt(['email' => strtolower($request->email), 'password' => strtolower($request->password)])) return response()->json(['message' => 'Identifiants incorrect !'], 401);
+    
+            $token = $request->user()->createToken('authToken');
+            return response()->json([
+                'user' => Auth::user(),
+                'access_token' => $token->plainTextToken,
+                'token_type' => 'bearer'
+            ], 200);
         }
-        $token = $request->user()->createToken('authToken');
-        return response()->json([
-            'user' => Auth::user(),
-            'access_token' => $token->plainTextToken,
-            'token_type' => 'bearer'
-        ], 200);
+        else {
+            return response()->json([
+                'messages' => $messages
+            ], 200);
+        }
     }
 
-    public function logout (string $id)   
+    public function logout (User $user)   
     {
-        User::find($id)->tokens()->delete();  
+        $user->tokens()->delete();  
         return response(['message' => 'Deconnexion ...'],200);     
     }
 
-    public function password (Request $request)   
+    public function password ($old = null, $new, User $user = null)   
     {
         // if (!Gate::allows('password', $request->user())) abort(403);
-        $request->user()->update([ 'password' => $request->new_password ]);
-        return response(['message' => 'Mot de passe changé avec succès ...'],200);
+        
+        if($user){
+            $user->update([ 'password' => $new ]);
+            return response(['message' => 'Mot de passe changé avec succès ...'],200);
+        }
+        else {
+            if(Auth::user()->password !== $old){
+                return response(['message' => 'Ancien mot de passe incorrect ...'], 401);
+            }
+            else {
+                User::find(Auth::user()->id)->update([ 'password' => $new ]);
+            }
+        }
     }
 
     public function state (Request $request)   
@@ -168,6 +210,9 @@ class UserController extends Controller
 
             case true:
                 User::find($request->id)->update([ 'state' => 'enabled' ]);
+                if(User::find($request->id)->type == "seller"){
+                    
+                }
             break;
 
             case 'disabled':

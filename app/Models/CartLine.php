@@ -18,7 +18,7 @@ class CartLine extends Model
         return $this->belongsTo(Cart::class);
     }
 
-    public function products() {
-        return $this->hasMany(Product::class);
+    public function product() {
+        return $this->belongsTo(Product::class);
     }
 }

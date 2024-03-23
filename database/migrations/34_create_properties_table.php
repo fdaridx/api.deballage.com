@@ -11,7 +11,7 @@ return new class extends Migration
     {
         Schema::create('properties', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('atribute_id')->constrained();
+            $table->foreignId('atribute_id')->constrained()->cascadeOnDelete();;
             $table->string('valeur');
             $table->timestamps();
         });

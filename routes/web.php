@@ -17,6 +17,3 @@ Route::get('/', function () {
     return view('welcome');
 });
 
-Route::get('/users/authenticate', function () {
-    return view('user.authenticate');
-})->name('users.authenticate');
