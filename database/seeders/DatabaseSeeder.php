@@ -21,8 +21,7 @@ class DatabaseSeeder extends Seeder
             CitySeeder::class,
             QwaterSeeder::class,
             AtributeSeeder::class,
-            PropertySeeder::class,
-            AtributeProductSeeder::class
+            PropertySeeder::class
         ]);
     }
 }
