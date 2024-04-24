@@ -1,0 +1,10 @@
+<IfModule mod_rewrite.c>
+    RewriteEngine on
+
+    # Permettre l'accès direct au dossier "storage"
+    RewriteRule ^storage/(.*)$ storage/$1 [L]
+
+    # Réécrire les autres requêtes vers le dossier "public"
+    RewriteCond %{REQUEST_URI} !^public
+    RewriteRule ^(.*)$ public/$1 [L]
+</IfModule>

@@ -3,8 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Shop;
-use App\Http\Requests\StoreShopRequest;
-use App\Http\Requests\UpdateShopRequest;
+use Illuminate\Http\Request;
 
 class ShopController extends Controller
 {
@@ -27,7 +26,7 @@ class ShopController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function store(StoreShopRequest $request)
+    public function store(Request $request)
     {
         //
     }
@@ -51,7 +50,7 @@ class ShopController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(UpdateShopRequest $request, Shop $shop)
+    public function update(Request $request, Shop $shop)
     {
         //
     }

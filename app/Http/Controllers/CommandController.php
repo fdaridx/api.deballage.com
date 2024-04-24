@@ -16,8 +16,18 @@ class CommandController extends Controller
 {
     public function index($state = null)
     {
-        return $state ? response()->json(Command::where('state', $state)::with('commandlines')->get(), 200) 
-        : response()->json(Command::with('commandlines')->get(), 200);
+        return $state ? response()->json(Command::where('state', $state)::with('commandlines')->get()->map(function ($command) {
+            $command->details_url = route('commandes.details', $command->id);
+            return $command;
+        }), 200) 
+        : response()->json(Command::with(['commandlines', 'user', 'qwater' => function ($query) {
+            $query->with(['city' => function ($query) {
+                $query->with(['country']);
+            }]);
+        }, ])->get()->map(function ($command) {
+            $command->details_url = route('commandes.details', $command->id);
+            return $command;
+        }), 200);
     }
 
     public function create()

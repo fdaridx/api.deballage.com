@@ -1,0 +1,27 @@
+.indicator {
+    position: fixed;
+    top: 0;
+    left: 0;
+    padding: 8px;
+    background-color: rgba(0, 0, 0, 0.8);
+    color: white;
+    font-family: Arial, sans-serif;
+    font-size: 14px;
+    visibility: hidden;
+    pointer-events: none;
+}
+
+@keyframes closeModalAnimation {
+    0% {
+        opacity: 1;
+        transform: scale(1);
+    }
+    100% {
+        opacity: 0;
+        transform: scale(0);
+    }
+}
+
+#modal.hidden {
+    animation: closeModalAnimation 0.3s forwards;
+}

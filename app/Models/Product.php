@@ -9,7 +9,7 @@ use Illuminate\Database\Eloquent\Model;
 class Product extends Model
 {
     use HasFactory;
-    protected $fillable = [ 'categorie_id', 'shop_id', 'name', 'description', 'state', 'price', 'special_price', 'info' ];
+    protected $fillable = [ 'category_id', 'shop_id', 'name', 'description', 'state', 'price', 'special_price', 'info' ];
 
     protected $casts = [
         'info' => 'json',
@@ -31,11 +31,15 @@ class Product extends Model
         return $this->hasMany(CommandLine::class);
     }
 
+    public function images() {
+        return $this->hasMany(Image::class);
+    }
+    
     public function rewiews() {
         return $this->hasMany(Rewiew::class);
     }
 
     public function attributes() {
-        return $this->belongsToMany(Attribute::class);
+        return $this->belongsToMany(Atribute::class, 'atribute_products');
     }
 }

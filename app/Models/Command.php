@@ -14,6 +14,10 @@ class Command extends Model
         return $this->belongsTo(User::class);
     }
 
+    public function qwater() {
+        return $this->belongsTo(Qwater::class);
+    }
+
     public function commandlines() {
         return $this->hasMany(CommandLine::class);
     }

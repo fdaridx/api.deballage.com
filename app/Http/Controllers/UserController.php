@@ -15,7 +15,11 @@ class UserController extends Controller
     public function index(Request $request)
     {
         // if (!Gate::allows('viewAny', $request->user())) abort(403);
-        return response()->json(User::orderByDesc('id')->get(), 200);
+        $users = User::with(['shop'])->orderByDesc('id')->get()->map(function ($user) {
+            $user->edit_url = route('users.edit', $user->id);
+            return $user;
+        });
+        return response()->json($users, 200);
     }
 
     public function create()
@@ -200,25 +204,25 @@ class UserController extends Controller
         }
     }
 
-    public function state (Request $request)   
+    public function state (Request $request, User $user, string $status)   
     {
         // if (!Gate::allows('state', $request->user())) abort(403);
-        switch ($request->status) {
+        switch ($status) {
             case false:
-                User::find($request->id)->update([ 'state' => 'refuse' ]);
+                $user->update([ 'state' => 'refuse' ]);
             break;
 
             case true:
-                User::find($request->id)->update([ 'state' => 'enabled' ]);
-                if(User::find($request->id)->type == "seller"){
+                $user->update([ 'state' => 'enabled' ]);
+                if($user->type == "seller"){
                     
                 }
             break;
 
             case 'disabled':
-                User::find($request->id)->update([ 'state' => 'disabled' ]);
-                if (User::find($request->id)->type == 'seller') {
-                    User::find($request->id)->shop->products->update(['state' => 'disabled']);
+                $user->update([ 'state' => 'disabled' ]);
+                if ($user->type == 'seller') {
+                    $user->shop->products->update(['state' => 'disabled']);
                 }
             break;
         }

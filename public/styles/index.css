@@ -1,0 +1,92 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@import url('./vendor/normalize.css');
+@import url('./components/index.css');
+@import url('./layouts/index.css');
+@import url('./pages/index.css');
+@import url('./utilities/index.css');
+
+
+
+body {
+  background-color: #F2F3F7;
+}
+
+@screen lg {
+    .primary-btn-sub-link:hover + .sub-categories {
+        transition: all .5s ease;
+        display: block;
+    }
+}
+
+@screen md {
+  .about-act-btns {
+    flex-direction: row;
+  }
+}
+
+
+
+/* Category dropdown hero section */
+.main-container {
+    position: relative;
+}
+
+.sidebar-trigger {
+  display: inline-block;
+}
+
+.sidebar-menu {
+  position: absolute;
+  top: -8px;
+  right: -710px;
+  display: none;
+  z-index: 10;
+  padding: 1rem;
+  background-color: #fff;
+  box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.sidebar-trigger:hover .sidebar-menu {
+  display: block;
+  animation: fadeUp 0.3s;
+}
+
+.hero-category {
+  box-shadow: 0px 0px 12px rgba(0, 0, 0, 0.1);
+}
+
+.sidebar-container {
+    display: none;
+    position: absolute;
+    top: 0;
+    left: 0;
+}
+
+.sidebar-container.active {
+    display: block;
+    animation: slideInRight 0.5s forwards;
+}
+
+.panel-slider {
+  transform: translateX(-100vw);
+  transition: all .5s ease-in-out;
+  opacity: 0;
+}
+
+.panel-slider.active {
+  transform: translateX(0);
+  opacity: 1;
+}
+
+@media (min-width: 1014px) {
+  .panel-slider {
+    transform: translateX(0);
+    opacity: 1;
+  }
+}
+
+
+

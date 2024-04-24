@@ -3,62 +3,82 @@
 namespace App\Http\Controllers;
 
 use App\Models\Qwater;
-use App\Http\Requests\StoreQwaterRequest;
-use App\Http\Requests\UpdateQwaterRequest;
+use Illuminate\Http\Request;
 
 class QwaterController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
     public function index()
     {
-        //
+        $qwaters = Qwater::with('city')->orderByDesc('id')->get()->map(function ($qwater) {
+            $qwater->edit_url = route('qwaters.edit', $qwater->id);
+            return $qwater;
+        });
+        return response()->json($qwaters, 200);
     }
 
-    /**
-     * Show the form for creating a new resource.
-     */
     public function create()
     {
         //
     }
 
-    /**
-     * Store a newly created resource in storage.
-     */
-    public function store(StoreQwaterRequest $request)
+    public function store(Request $request)
     {
-        //
+        $messages = [];
+                
+        if ($request->name == null) {
+            $messages[] = "Veuillez renseigner le nom";
+        }
+
+        if (count($messages) == 0) {
+            $qwater = Qwater::firstOrCreate([
+                'name' => strtolower($request->name),
+            ], [
+                'citie_id' => $request->citie_id,
+                'name' => strtolower($request->name),
+            ]);
+
+            if ($qwater->wasRecentlyCreated) {
+                return response()->json(['message' => 'Qwater crée avec succès !'], 200);
+            } else {
+                return response()->json(['message' => 'Ce qwater existe déjà !'], 500);
+            }
+            
+        } else {
+            return response()->json(['messages' => $messages], 500);
+        }
     }
 
-    /**
-     * Display the specified resource.
-     */
     public function show(Qwater $qwater)
     {
         //
     }
 
-    /**
-     * Show the form for editing the specified resource.
-     */
     public function edit(Qwater $qwater)
     {
         //
     }
 
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(UpdateQwaterRequest $request, Qwater $qwater)
+    public function update(Request $request, Qwater $qwater)
     {
-        //
+        $messages = [];
+        $new_qwater = Qwater::where('name', $request->name)->get();
+                
+        if ($request->name == null) {
+            $messages[] = "Veuillez renseigner le nom";
+        }
+
+        if (count($messages) == 0) {
+            if ($new_qwater->isEmpty()) {
+                $qwater->update(['name' => $request->name, $request->citie_id]);
+                return response()->json(['message' => 'Qwater modifié avec succès !'], 200);
+            } else {
+                return response()->json(['message' => 'Ce qwater existe déjà !'], 500);
+            }            
+        } else {
+            return response()->json(['messages' => $messages], 500);
+        }
     }
 
-    /**
-     * Remove the specified resource from storage.
-     */
     public function destroy(Qwater $qwater)
     {
         //

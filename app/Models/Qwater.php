@@ -8,9 +8,13 @@ use Illuminate\Database\Eloquent\Model;
 class Qwater extends Model
 {
     use HasFactory;
-    protected $filable = ['citie_id', 'name'];
+    protected $fillable = ['citie_id', 'name'];
 
     public function city() {
-        return $this->belongsTo(City::class);
+        return $this->belongsTo(City::class, 'citie_id');
+    }
+
+    public function commands() {
+        return $this->hasMany(Command::class);
     }
 }

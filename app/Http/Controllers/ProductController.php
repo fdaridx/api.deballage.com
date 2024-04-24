@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Image;
 use App\Models\Product;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Gate;
@@ -14,8 +15,19 @@ class ProductController extends Controller
     public function index()
     {
         // if (!Gate::allows('viewAny', Auth::user())) abort(403);
-        return response()->json(Product::where('state', 'enabled')
-            ->orWhere('state', 'init')->orderByDesc('name')->get(), 200);
+        $products = Product::with([
+            'category', 'shop', 'images', 'attributes' => function ($query) {
+                $query->select([
+                    'atributes.*', 
+                    DB::raw('CONCAT("/attributes/edit/", atributes.id) AS edit')
+                ]);
+            },
+        ])->orderByDesc('id')->get()->map(function ($product) {
+            $product->edit_url = route('products.edit', $product->id);
+            $product->attribute_url = route('products.attribute', $product->id);
+            return $product;
+        });
+        return response()->json($products, 200);
     }
 
     public function create()
@@ -25,6 +37,7 @@ class ProductController extends Controller
 
     public function store(Request $request)
     {
+        
         // if (!Gate::allows('store', Auth::user())) abort(403);
         $messages = [];
         if (!self::validate($request->name, 'string', null, 3)) $messages[] = 'Nom incorrect';
@@ -32,29 +45,27 @@ class ProductController extends Controller
 
         if (count($messages) == 0) {
             $product = Product::where([
-                'categorie_id' => $request->categorie_id,
+                'category_id' => $request->category_id,
                 'name' => $request->name,
             ])->get();
     
             if ($product->isEmpty()) {
                 $product = Product::create([
-                    'categorie_id' => $request->categorie_id,
+                    'category_id' => $request->category_id,
                     'shop_id' => $request->shop_id,
                     'name' => $request->name,
                     'description' => $request->description ?? '',
                     'state' => 'init',
                     'price' => $request->price,
-                    'special_price' => $request->special_rice ?? null,
+                    'special_price' => $request->special_price ?? null,
                     'info'  => $request->info  ?? [],
                 ]);
     
-                if ($request->images !== null || !empty($request->images)) {
-                    foreach ($request->images as $image) {
-                        Image::create([
-                            'product_id' => $product->id,
-                            'path' => Storage::putFile('Product_image', $request->file($image)),
-                        ]);
-                    }
+                for ($i=0; $i < intval($request->i); $i++) { 
+                    Image::create([
+                        'product_id' => $product->id,
+                        'path' => $request->file('image_'. $i)->storeAs('', $request->file('image_'. $i)->getClientOriginalName()),
+                    ]);
                 }
                 return response(['message' => 'Produit enregistré avec succès !'],200);
             } else {
@@ -63,12 +74,16 @@ class ProductController extends Controller
         } else {
             return response()->json(['message' => $messages], 500);
         }     
-            
     }
 
     public function show(Product $product)
     {
-        return response()->json($product, 200);
+        return response()->json($product->with(['category', 'shop', 'attributes' => function ($query) {
+            $query->select([
+                'atributes.*', 
+                DB::raw('CONCAT("/attributes/edit/", atributes.id) AS edit')
+            ]);
+        }])->where('id', $product->id)->first(), 200);
     }
 
     public function edit(Request $request)
@@ -78,44 +93,37 @@ class ProductController extends Controller
 
     public function update(Request $request, Product $product)
     {
-        $messages = [];
-        if (!self::validate($request->name, 'string', null, 3)) $messages[] = 'Nom incorrect';
-        if (!self::validate($request->description, 'string', null, 3)) $messages[] = 'Description incorrect';
+        $new_product = Product::where([
+            'category_id' => $request->category_id,
+            'name' => $request->name,
+        ])->get();
 
-        if (count($messages) == 0) {
-            $product = Product::where([
-                'categorie_id' => $request->categorie_id,
-                'name' => $request->name,
-            ])->get();
-    
-            if ($product->isEmpty()) {
-                $product->update([
-                    'categorie_id' => $request->categorie_id,
-                    'shop_id' => $request->shop_id,
-                    'name' => $request->name,
-                    'description' => $request->description,
-                    'state' => 'enabled',
-                    'price' => $request->price,
-                    'special_price' => $request->special_price,
-                    'info'  => $request->info ?? [],
-                ]);
-                
-    
-                if ($request->images !== null || !empty($request->images)) {
-                    foreach ($request->images as $image) {
-                        Image::create([
-                            'product_id' => $product->id,
-                            'path' => Storage::putFile('Product_image', $request->file($image)),
-                        ]);
-                    }
-                }
-                return response()->json(['message' => 'Produit modifié avec succès !'], 200);
-            } else {
-                return response(['message' => 'Ce produit existe déjà !'],500);
-            }
-        } else {
-            return response()->json(['message' => $messages], 500);
-        }  
+        // if ($new_product->isEmpty()) {
+        //     $product->update([
+        //         'category_id' => $request->category_id,
+        //         'shop_id' => $request->shop_id,
+        //         'name' => $request->name,
+        //         'description' => $request->description,
+        //         'state' => 'enabled',
+        //         'price' => $request->price,
+        //         'special_price' => $request->special_price,
+        //         'info'  => $request->info ?? [],
+        //     ]);
+            
+        //     if ($request->hasFile('image_0')) {
+        //         foreach ($product->images as $image) { $image->delete(); }
+        //         for ($i=0; $i < intval($request->i); $i++) { 
+        //             Image::create([
+        //                 'product_id' => $product->id,
+        //                 'path' => Storage::putFile('Product_image', $request->file('image_'. $i)),
+        //             ]);
+        //         }
+        //     }
+        //     return response()->json(['message' => 'Produit modifié avec succès !'], 200);
+        // } else {
+        //     return response(['message' => 'Ce produit existe déjà !'],500);
+        // }
+        return $request->category_id;
     }
 
     public function destroy(Request $request)
@@ -128,5 +136,14 @@ class ProductController extends Controller
     public function option($option)
     {
         return response()->json(Product::where($option)->get(), 200);
+    }
+
+    public function state(Request $request, Product $product, string $state)
+    {
+        // if (!Gate::allows('delete', Auth::user())) abort(403);
+        $product->update([
+            'state' => $state
+        ]);
+        return response()->json(['message' => 'State modifié avec succès !'], 200);
     }
 }

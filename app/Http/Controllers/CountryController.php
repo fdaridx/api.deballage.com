@@ -3,62 +3,82 @@
 namespace App\Http\Controllers;
 
 use App\Models\Country;
-use App\Http\Requests\StoreCountryRequest;
-use App\Http\Requests\UpdateCountryRequest;
+use Illuminate\Http\Request;
 
 class CountryController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
+
     public function index()
     {
-        //
+        $countries = Country::orderByDesc('id')->get()->map(function ($country) {
+            $country->edit_url = route('countries.edit', $country->id);
+            return $country;
+        });
+        return response()->json($countries, 200);
     }
 
-    /**
-     * Show the form for creating a new resource.
-     */
     public function create()
     {
         //
     }
 
-    /**
-     * Store a newly created resource in storage.
-     */
-    public function store(StoreCountryRequest $request)
+    public function store(Request $request)
     {
-        //
+        $messages = [];
+                
+        if ($request->name == null) {
+            $messages[] = "Veuillez renseigner le nom";
+        }
+
+        if (count($messages) == 0) {
+            $country = Country::firstOrCreate([
+                'name' => strtolower($request->name),
+            ], [
+                'name' => strtolower($request->name),
+            ]);
+
+            if ($country->wasRecentlyCreated) {
+                return response()->json(['message' => 'Country crée avec succès !'], 200);
+            } else {
+                return response()->json(['message' => 'Ce country existe déjà !'], 500);
+            }
+            
+        } else {
+            return response()->json(['messages' => $messages], 500);
+        }
     }
 
-    /**
-     * Display the specified resource.
-     */
     public function show(Country $country)
     {
         //
     }
 
-    /**
-     * Show the form for editing the specified resource.
-     */
     public function edit(Country $country)
     {
         //
     }
 
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(UpdateCountryRequest $request, Country $country)
+    public function update(Request $request, Country $country)
     {
-        //
+        $messages = [];
+        $new_country = Country::where('name', $request->name)->get();
+                
+        if ($request->name == null) {
+            $messages[] = "Veuillez renseigner le nom";
+        }
+
+        if (count($messages) == 0) {
+            if ($new_country->isEmpty()) {
+                $country->update(['name' => $request->name]);
+                return response()->json(['message' => 'Country modifié avec succès !'], 200);
+            } else {
+                return response()->json(['message' => 'Ce country existe déjà !'], 500);
+            }            
+        } else {
+            return response()->json(['messages' => $messages], 500);
+        }
     }
 
-    /**
-     * Remove the specified resource from storage.
-     */
     public function destroy(Country $country)
     {
         //

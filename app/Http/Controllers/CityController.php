@@ -3,62 +3,82 @@
 namespace App\Http\Controllers;
 
 use App\Models\City;
-use App\Http\Requests\StoreCityRequest;
-use App\Http\Requests\UpdateCityRequest;
+use Illuminate\Http\Request;
 
 class CityController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
     public function index()
     {
-        //
+        $cities = City::with('country')->orderByDesc('id')->get()->map(function ($city) {
+            $city->edit_url = route('cities.edit', $city->id);
+            return $city;
+        });
+        return response()->json($cities, 200);
     }
 
-    /**
-     * Show the form for creating a new resource.
-     */
     public function create()
     {
         //
     }
 
-    /**
-     * Store a newly created resource in storage.
-     */
-    public function store(StoreCityRequest $request)
+    public function store(Request $request)
     {
-        //
+        $messages = [];
+                
+        if ($request->name == null) {
+            $messages[] = "Veuillez renseigner le nom";
+        }
+
+        if (count($messages) == 0) {
+            City::create([
+                'countrie_id' => $request->countrie_id,
+                'name' => strtolower($request->name),
+            ]);
+
+            // if ($city->wasRecentlyCreated) {
+            //     return response()->json(['message' => 'City crée avec succès !'], 200);
+            // } else {
+            //     return response()->json(['message' => 'Ce city existe déjà !'], 500);
+            // }
+            return response()->json(['message' => 'City crée avec succès !'], 200);
+
+            
+        } else {
+            return response()->json(['messages' => $messages], 500);
+        }
     }
 
-    /**
-     * Display the specified resource.
-     */
     public function show(City $city)
     {
         //
     }
 
-    /**
-     * Show the form for editing the specified resource.
-     */
     public function edit(City $city)
     {
         //
     }
 
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(UpdateCityRequest $request, City $city)
+    public function update(Request $request, City $city)
     {
-        //
+        $messages = [];
+        $new_city = City::where('name', $request->name)->get();
+                
+        if ($request->name == null) {
+            $messages[] = "Veuillez renseigner le nom";
+        }
+
+        if (count($messages) == 0) {
+            if ($new_city->isEmpty()) {
+                $city->update(['name' => $request->name, $request->countrie_id]);
+                return response()->json(['message' => 'City modifié avec succès !'], 200);
+            } else {
+                return response()->json(['message' => 'Ce city existe déjà !'], 500);
+            }            
+        } else {
+            return response()->json(['messages' => $messages], 500);
+        }
     }
 
-    /**
-     * Remove the specified resource from storage.
-     */
     public function destroy(City $city)
     {
         //

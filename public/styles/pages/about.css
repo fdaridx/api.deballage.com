@@ -1,0 +1,48 @@
+/* About page header slider */
+
+#headerContent {
+    transition: transform 0.5s ease;
+    position: relative;
+    z-index: 10;
+  }
+#aboutHeader {
+    background-size: cover;
+    background-position: center center;
+    background-repeat: no-repeat;
+    transition: all 1s ease-in-out;
+    animation: zoom-in 1s ease-in-out 0.2s linear;
+}
+
+#aboutHeader::before {
+    content: '';
+    width: 100%;
+    height: 100%;
+    position: absolute;
+    top: 0;
+    left: 0;
+    background-color: rgba(0, 0, 0, 0.5);
+}
+
+#sliderNav {
+  display: flex;
+  justify-content: center;
+  position: absolute;
+  bottom: 40px;
+}
+
+.sliderIndicator {
+  width: 10px;
+  height: 10px;
+  background-color: #fff;
+  border-radius: 50%;
+  margin: 0 5px;
+  cursor: pointer;
+}
+
+.sliderIndicator.active {
+  background-color: #f00;
+}
+
+.about-spec-hero {
+  background-image: url('../../images/jpgs/bg-hd-image.jpg') !important;
+}

@@ -1,0 +1,50 @@
+@keyframes slideInRight {
+    0% {
+      transform: translateX(100%);
+      opacity: 0;
+    }
+    100% {
+      transform: translateX(0);
+      opacity: 1;
+    }
+}
+
+@keyframes zoom-in {
+    0% {
+        background-size: 120%;
+    }
+    100% {
+        background-size: 150%;
+    }
+}
+
+@keyframes fadeUp {
+    0% {
+      opacity: 0;
+      transform: translateY(10px);
+    }
+    100% {
+      opacity: 1;
+      transform: translateY(0);
+    }
+}
+
+/* Chat animation */
+@keyframes wave {
+  0% {
+      fill: red;
+      transform: translateY(0);
+  }
+  50% {
+      fill: red;
+      transform: translateY(-30px);
+  }
+  100% {
+      fill: black;
+      transform: translateY(0);
+  }
+}
+
+.wave-line {
+  animation: wave 2s linear infinite;
+}

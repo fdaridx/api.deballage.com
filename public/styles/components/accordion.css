@@ -1,0 +1,20 @@
+.accordion {
+    width: 300px;
+}
+
+.accordion-item {
+    margin-bottom: 10px;
+}
+
+.accordion-header {
+    padding: 10px;
+    cursor: pointer;
+}
+
+.accordion-content {
+    overflow: hidden;
+    transition: max-height 0.3s ease-in-out;
+    max-height: 0;
+    background-color: #FFFFFF;
+    word-wrap: break-word; /* Add this line to enable text wrapping */
+  }

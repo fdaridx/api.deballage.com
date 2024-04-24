@@ -9,14 +9,14 @@ class Atribute extends Model
 {
     use HasFactory;
 
-    protected $filable = ['name'];
+    protected $fillable = ['name'];
 
     public function properties() {
         return $this->hasMany(Property::class);
     }
 
     public function products() {
-        return $this->belongsToMany(Product::class);
+        return $this->belongsToMany(Product::class, "atribute_products");
     }
 
 }

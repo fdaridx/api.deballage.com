@@ -12,7 +12,7 @@ class ProductSeeder extends Seeder
     public function run(): void
     {
         Product::create([
-            'categorie_id' => 1,
+            'category_id' => 1,
             'shop_id' => 1,
             'name' => 'ordinateur',
             'description' => '...',

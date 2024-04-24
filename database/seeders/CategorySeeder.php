@@ -12,7 +12,7 @@ class CategorySeeder extends Seeder
     public function run(): void
     {
         Category::create([
-            'categorie_id' => null,
+            'category_id' => null,
             'name' => 'Machine',
             'description' => '...',
             'profile' => '',

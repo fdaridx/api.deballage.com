@@ -8,9 +8,9 @@ use Illuminate\Database\Eloquent\Model;
 class Country extends Model
 {
     use HasFactory;
-    protected $filable = ['name'];
+    protected $fillable = ['name'];
 
     public function cities() {
-        return $this->hasMany(Country::class);
+        return $this->hasMany(City::class);
     }
 }

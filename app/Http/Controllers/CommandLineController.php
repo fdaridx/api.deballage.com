@@ -10,9 +10,17 @@ use Illuminate\Http\Request;
 class CommandLineController extends Controller
 {
 
-    public function index()
+    public function index($id)
     {
-        //
+        $commandlines = CommandLine::with('product')->where([
+            'command_id' => $id,
+            'state' => 'enabled',
+        ])->orWhere('state', 'init')->get()->map(function ($commandline) {
+            $commandline->edit_url = route('commandlines.edit', $commandline->id);
+            $commandline->state_url = route('commandlines.state', $commandline->id);
+            return $commandline;
+        });
+        return response()->json($commandlines, 200);
     }
 
     public function create()
@@ -66,28 +74,37 @@ class CommandLineController extends Controller
 
         if (count($mesages) == 0) {
 
-            CartLine::where([
-                'product_id' => $commandLine->product_id, 
-                'quantity' => $commandLine->quantity, 
-                'attributesValues' => json_encode($commandLine->attributes_values),
-                'cart_id' => $commandLine->command->user->cart->id,
-                'state' => 'enabled'
-            ])->first()->update([
-                'product_id' => $request->product_id, 
-                'quantity' => $request->quantity, 
-                'attributesValues' => $request->attributes_values ?? [],
-                'cart_id' => $commandLine->command->user->cart->id,
-                'state' => 'enabled'
-            ]);
-
-            $commandLine->update([
-                'product_id' => $request->product_id, 
-                'command_id' => $request->id, 
-                'quantity' => $request->quantity, 
-                'attributes_values' => $request->attributes_values ?? []
-            ]);
+            try {
+                CartLine::where([
+                    'product_id' => $commandLine->product_id, 
+                    'quantity' => $commandLine->quantity, 
+                    'attributesValues' => json_encode($commandLine->attributes_values),
+                    'cart_id' => $commandLine->command->user->cart->id,
+                    'state' => 'enabled'
+                ])->first()->update([
+                    'product_id' => $request->product_id, 
+                    'quantity' => $request->quantity, 
+                    'attributesValues' => $request->attributes_values ?? [],
+                    'cart_id' => $commandLine->command->user->cart->id,
+                    'state' => 'enabled'
+                ]);
+    
+                $commandLine->update([
+                    'product_id' => $request->product_id, 
+                    'command_id' => $request->id, 
+                    'quantity' => $request->quantity, 
+                    'attributes_values' => $request->attributes_values ?? []
+                ]);
+            } catch (\Throwable $th) {
+                $commandLine->update([
+                    'product_id' => $request->product_id, 
+                    'command_id' => $request->id, 
+                    'quantity' => $request->quantity, 
+                    'attributes_values' => $request->attributes_values ?? []
+                ]);
+            }
            
-            return response()->json(['messages' => "Produit modifié avec succès !"], 500);
+            return response()->json(['messages' => "Produit modifié avec succès !"], 200);
         } else {
             return response()->json(['messages' => $messages], 500);
         }
@@ -100,7 +117,7 @@ class CommandLineController extends Controller
 
     public function state(Request $request, CommandLine $commandLine)
     {
-        $commandLine = CommandLine::find($request->id);
+        // $commandLine = CommandLine::find($request->id);
         switch ($request->state) {
             case 'confirmed':
                 // La ligne de commande passe à enabled pour notifier que le seller accepte de livrer le produit
@@ -127,12 +144,14 @@ class CommandLineController extends Controller
 
                 // Ensuite on recherche la ligne du panier correspondant à la ligne de la commande qu'on supprimera
                 
-                CartLine::where([
-                    'product_id' => $commandLine->product_id, 
-                    'quantity' => $commandLine->quantity, 
-                    'attributesValues' => json_encode($commandLine->attributes_values), 
-                    'state' => 'enabled', 
-                ])->first()->delete();
+                try {
+                    CartLine::where([
+                        'product_id' => $commandLine->product_id, 
+                        'quantity' => $commandLine->quantity, 
+                        'attributesValues' => json_encode($commandLine->attributes_values), 
+                        'state' => 'enabled', 
+                    ])->first()->delete();
+                } catch (\Throwable $th) { }
 
                 Notification::create([
                     'user_id' => $commandLine->command->user_id,
@@ -149,12 +168,14 @@ class CommandLineController extends Controller
                 */
                 $command = $commandLine->command;
                 // On recherche la ligne du panier correspondant à la ligne de la commande qu'on remettra a init car la commande a été annulé
-                CartLine::where([
-                    'product_id' => $commandLine->product_id, 
-                    'quantity' => $commandLine->quantity, 
-                    'attributesValues' => json_encode($commandLine->attributes_values), 
-                    'state' => 'enabled', 
-                ])->first()->update(['state' => 'init']);
+                try {
+                    CartLine::where([
+                        'product_id' => $commandLine->product_id, 
+                        'quantity' => $commandLine->quantity, 
+                        'attributesValues' => json_encode($commandLine->attributes_values), 
+                        'state' => 'enabled', 
+                    ])->first()->update(['state' => 'init']);
+                } catch (\Throwable $th) { }
 
                 // Ensuite on supprime la ligne de la commande
                 $commandLine->delete();

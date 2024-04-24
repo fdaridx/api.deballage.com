@@ -1,0 +1,12 @@
+/* Navbar CSS */
+.menu {
+    transition: transform 0.3s ease-in-out;
+}
+.menu.open {
+    width: 100%;
+    transform: translateX(0%);;
+    z-index: 999;
+}
+.menu.closed {
+    transform: translateX(-100%);
+}
