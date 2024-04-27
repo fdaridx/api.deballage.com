@@ -57,8 +57,19 @@ function success(elt) {
     elt.parent().find('[message]').remove();
 }
 
-async function redirect(url, param = {}) {
-    $('#body').html('').append((await axios.get(url, param)).data);
+async function redirect(url, param = {}, authenticable = true) {
+    const headers = {
+        Authorization: `Bearer ${localStorage.getItem('auth_token')}`,
+    }
+
+    if (authenticable) {
+        $('body').html('').append((await axios.get(url, {
+            headers: headers, params: param
+        })).data);
+    } else {
+        $('body').html('').append((await axios.get(url, param)).data);
+    }
+
     history.pushState({}, '', url);
 }
 
@@ -109,7 +120,10 @@ $(document).on('alpine:init', function () {
     }));
 
     Alpine.data('xlien', () => ({
-        async redirect (url, param = {}) { redirect(url, param); },
+        async redirect (url, param = {}) { 
+            console.log('clicked');
+            redirect(url, param); 
+        },
         async delete () { 
             // console.log('delete');
             // console.log('api/' + api + '/delete/' + id);

@@ -6,8 +6,7 @@
             <div class="row align-items-center justify-content-between pt-3">
                 <div class="col-auto mb-3">
                     <h1 class="page-header-title">
-
-                        Modify Category
+                        Add new Shop
                     </h1>
                 </div>
             </div>
@@ -19,36 +18,39 @@
     <div class="row">
         <div class="col-lg-8">
             <div class="card mb-4">
-                <div class="card-header">category</div>
+                <div class="card-header">shop</div>
                 <div class="card-body">
                     <form>
-                        <input hidden value="{{ $category->id }}" id="id">
                         <div class="mb-3"> 
-                            <label class="small mb-1">Categories</label>
-                            <select class="form-select" aria-label="Default select example" id="categorie_id"> 
-                                <option value="{{ $category->category_id }}" selected>{{ $category->category ? ucwords($category->category->name) : '' }}</option>
-                                <option disabled="">Select a categorie :</option>
-                                @foreach ($categories as $categorie)
-                                    <option value="{{ $categorie->id }}">{{ ucwords($categorie->name) }}</option>
+                            <label class="small mb-1">Users</label>
+                            <select class="form-select" aria-label="Default select example" id="user_id"> 
+                                <option selected="" disabled="">Select a user :</option>
+                                @foreach ($users as $user)
+                                    <option value="{{ $user->id }}">{{ ucwords($user->first_name).' '.ucwords($user->last_name) }}</option>
                                 @endforeach
                                
                             </select>
                         </div>
-                      
+
                         <div class="mb-3">
-                            <label class="small mb-1" for="name">Name</label>
-                            <input value="{{ $category->name }}" class="form-control" id="name" type="text" placeholder="Enter Name" name="name" verify>
+                            <label class="small mb-1" for="profile">intitule</label>
+                            <input class="form-control" id="intitule" type="text" name="intitule" verify>
                         </div>
 
                         <div class="mb-3">
-                            <label class="small mb-1" for="description">Description</label>
-                            <textarea class="form-control" id="description" type="text" placeholder="Enter Description" name="description" rows="3" verify>{{ $category->description }}</textarea>
+                            <label class="small mb-1" for="intitule">description</label>
+                            <textarea class="form-control" id="description" rows="5" verify></textarea>
                         </div>
 
                         <div class="mb-3">
-                            <label class="small mb-1" for="profile">Profile</label>
-                            <input class="form-control" id="profile" type="file" name="profile">
+                            <label class="small mb-1" for="profile">profile</label>
+                            <input class="form-control" id="profile" type="file" name="profile" verify>
                         </div>
+
+                        {{-- <div class="mb-3">
+                            <label class="small mb-1" for="profile">localisation</label>
+                            <input class="form-control" id="localisation" type="text" name="localisation" verify>
+                        </div> --}}
 
                         <a id="save" class="btn btn-primary">Save</a>
                     </form>
@@ -65,21 +67,21 @@
                 const formData = new FormData();
 
                 formData.append('profile', $('#profile')[0].files[0]);
-                formData.append('name', $('#name').val());
+                formData.append('user_id', $('#user_id').val());
+                formData.append('intitule', $('#intitule').val());
                 formData.append('description', $('#description').val());
-                formData.append('categorie_id', $('#categorie_id').val());
 
-                axios.post('/api/categories/update/'+$('#id').val(), formData, {
+                axios.post('/api/shops', formData, {
                     headers: {
                         'Content-Type': 'multipart/form-data',
                     },
                 })
                 .then((response) => {
                     if (response.status === 200) {
-                        redirect("{{ Route('categories.index') }}");
+                        redirect("{{ Route('shops.index') }}");
                     }
                 })
-                .catch((response) => { console.log(response); });
+                .catch((response) => { console.error(response); });
             }            
         })
     })

@@ -72,8 +72,9 @@ class AtributeProductController extends Controller
         //
     }
 
-    public function destroy(AtributeProduct $atributeProduct)
+    public function destroy(AtributeProduct $attributeproduct)
     {
-        //
+        $attributeproduct->delete();
+        return response(200);
     }
 }

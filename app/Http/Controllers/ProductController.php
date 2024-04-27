@@ -98,38 +98,38 @@ class ProductController extends Controller
             'name' => $request->name,
         ])->get();
 
-        // if ($new_product->isEmpty()) {
-        //     $product->update([
-        //         'category_id' => $request->category_id,
-        //         'shop_id' => $request->shop_id,
-        //         'name' => $request->name,
-        //         'description' => $request->description,
-        //         'state' => 'enabled',
-        //         'price' => $request->price,
-        //         'special_price' => $request->special_price,
-        //         'info'  => $request->info ?? [],
-        //     ]);
+        if ($new_product->isEmpty()) {
+            $product->update([
+                'category_id' => $request->category_id,
+                'shop_id' => $request->shop_id,
+                'name' => $request->name,
+                'description' => $request->description,
+                'state' => 'enabled',
+                'price' => $request->price,
+                'special_price' => $request->special_price,
+                'info'  => $request->info ?? [],
+            ]);
             
-        //     if ($request->hasFile('image_0')) {
-        //         foreach ($product->images as $image) { $image->delete(); }
-        //         for ($i=0; $i < intval($request->i); $i++) { 
-        //             Image::create([
-        //                 'product_id' => $product->id,
-        //                 'path' => Storage::putFile('Product_image', $request->file('image_'. $i)),
-        //             ]);
-        //         }
-        //     }
-        //     return response()->json(['message' => 'Produit modifié avec succès !'], 200);
-        // } else {
-        //     return response(['message' => 'Ce produit existe déjà !'],500);
-        // }
+            if ($request->file('image_0') !== null || $request->file('image_0') !== 'undefined' || !empty($request->file('image_0'))) {
+                foreach ($product->images as $image) { $image->delete(); }
+                for ($i=0; $i < intval($request->i); $i++) { 
+                    Image::create([
+                        'product_id' => $product->id,
+                        'path' => $request->file('image_'. $i)->storeAs('', $request->file('image_'. $i)->getClientOriginalName()),
+                    ]);
+                }
+            }
+            return response()->json(['message' => 'Produit modifié avec succès !'], 200);
+        } else {
+            return response(['message' => 'Ce produit existe déjà !'],500);
+        }
         return $request->category_id;
     }
 
-    public function destroy(Request $request)
+    public function destroy(Request $request, $product)
     {
         // if (!Gate::allows('delete', Auth::user())) abort(403);
-        Product::find($request->id)->delete();
+        $product->delete();
         return response()->json(['message' => 'Produit supprimé avec succès !'], 200);
     }
 

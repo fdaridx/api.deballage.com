@@ -68,25 +68,15 @@
                                     <td>
                                         <div x-on:click='redirect(user.edit_url)' class="pointer badge bg-warning text-white rounded-pill">
                                             edit</div>
-                                        <template x-if="user.state == 'init'">
-                                            <div class="pointer badge bg-warning text-white rounded-pill">
-                                                init</div>
-                                        </template>
-                                        <template x-if="user.state == 'enabled'">
-                                            <div class="pointer badge bg-primary text-white rounded-pill">
-                                                enabled</div>
-                                        </template>
-                                        <template x-if="user.state == 'disabled'">
-                                            <div class="pointer badge bg-danger text-white rounded-pill">
-                                                disabled</div>
-                                        </template>
+                                        
+                                        <div x-on:click='redirect(user.state_url)' x-text="user.state" class="pointer badge bg-primary text-white rounded-pill"></div>
                                         
                                         <template x-if='user.shop'>
-                                            <div class="pointer badge bg-primary text-white rounded-pill">
+                                            <div x-on:click='redirect(user.shop_edit_url)' class="pointer badge bg-primary text-white rounded-pill">
                                                 shop</div>
                                         </template>
                                         
-                                        <div class="btn btn-datatable btn-icon btn-transparent-dark">
+                                        <div x-bind:id='user.id' x-bind:url="`users`" onclick="del(this)" class="btn btn-datatable btn-icon btn-transparent-dark">
                                             <svg 
                                                 xmlns="http://www.w3.org/2000/svg" width="24" height="24"
                                                 viewBox="0 0 24 24" fill="none" stroke="currentColor"

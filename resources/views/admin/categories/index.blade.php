@@ -68,7 +68,7 @@
                                             edit</div>
                                         {{-- <div x-on:click='redirect(categorie.details_url)' class="pointer badge bg-primary text-white rounded-pill">
                                             more</div> --}}
-                                        <div class="btn btn-datatable btn-icon btn-transparent-dark"><svg
+                                            <div x-bind:id='categorie.id' x-bind:url="`categories`" onclick="del(this)" class="btn btn-datatable btn-icon btn-transparent-dark"><svg
                                                 xmlns="http://www.w3.org/2000/svg" width="24" height="24"
                                                 viewBox="0 0 24 24" fill="none" stroke="currentColor"
                                                 stroke-width="2" stroke-linecap="round"

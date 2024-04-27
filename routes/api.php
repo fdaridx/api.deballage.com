@@ -18,9 +18,7 @@ use App\Http\Controllers\FavoriteController;
 use App\Http\Controllers\PropertyController;
 use App\Http\Controllers\CommandLineController;
 use App\Http\Controllers\AtributeProductController;
-
-
-
+use App\Http\Controllers\ShopController;
 
 // Users
     // route pour authentifier un utilisateur | Params: email, password
@@ -53,7 +51,7 @@ use App\Http\Controllers\AtributeProductController;
                        si status = true le champ state de la table utilsateur sera 'enabled' cela signifie que l'admin approuve la création du compte
                        si status = disabled le champ state de la table utilsateur sera 'disabled' cela signifie que l'admin desactive le compte
     */
-    Route::put('/users/state', [UserController::class, 'state']); //verifié
+    Route::put('/users/state/{user}/{status}', [UserController::class, 'state']); //verifié
 
     /* route pour changer le type d'un compte utilisateur | Contraintes: tout le monde 
     Params: type
@@ -80,6 +78,25 @@ use App\Http\Controllers\AtributeProductController;
     */
     Route::delete('/users/delete/{user}', [UserController::class, 'destroy']); //verifié
 
+// Shops
+    // route pour afficher la liste des shops | Contraintes: seulement l'admin peut acceder 
+    Route::get('/shops', [ShopController::class, 'index']); //verifié
+
+    // route pou renregistrer un shop | Contraintes: seulement l'admin peut acceder 
+    Route::post('/shops', [ShopController::class, 'store']); //verifié
+
+    // route pour modifier un shop | Contraintes: seulement l'admin peut acceder 
+    Route::post('/shops/update/{shop}', [ShopController::class, 'update']); //verifié
+
+    /* route pour afficher un shop | Contraintes: seulement l'admin peut acceder
+    Params: id 
+    */
+    Route::get('/shops/show/{shop}', [ShopController::class, 'show']); //verifié
+
+    /* route pour supprimer un shop | Contraintes: seulement l'admin peut acceder
+    Params: id 
+    */
+    Route::delete('/shops/delete/{shop}', [ShopController::class, 'destroy']); //verifié
 
 // Products
     /* route pour afficher la liste des produits | Contraintes: tout le monde 
@@ -110,13 +127,14 @@ use App\Http\Controllers\AtributeProductController;
     Params:id(du produit à modifier), category_id, shop_id, name, description, price, special_price, 
     info(informations supplementaire du produit sous forme de tableau associatif Ex: ['size' => 'm', 'couleur' => 'noir',])
     */
-    Route::put('/products/update/{product}', [ProductController::class, 'update']); //verifié
+    Route::post('/products/update/{product}', [ProductController::class, 'update']); //verifié
 
     /* route pour changer l'etat d'un produit | Contraintes: tout le monde
     Params: id du produit et le state 
     */
     Route::get('/products/state/{product}/{state}', [ProductController::class, 'state']); //verifié
 
+    Route::delete('/products/delete/{product}', [ProductController::class, 'destroy']); //verifié
 
 // Reviews
     /* route pour laisser les commentaires | Contraintes: utilisateurs 
@@ -144,209 +162,222 @@ use App\Http\Controllers\AtributeProductController;
 
 // Categories de produits
 
-        // route pour afficher la liste des categories de produits | Contraintes: tout le monde
-        Route::get('/categories', [CategoryController::class, 'index']); //verifié
+    // route pour afficher la liste des categories de produits | Contraintes: tout le monde
+    Route::get('/categories', [CategoryController::class, 'index']); //verifié
 
-        /* route pour enregistrer une categorie de produit | Contraintes: admin et seller 
-        Params: category_id (peut etre null. c'est dans le cas ou on voudrait avoir une sous categorie), name, description,
-        profile (qui est l'image),
-        */ 
-        Route::post('/categories', [CategoryController::class, 'store']); //verifié
+    /* route pour enregistrer une categorie de produit | Contraintes: admin et seller 
+    Params: category_id (peut etre null. c'est dans le cas ou on voudrait avoir une sous categorie), name, description,
+    profile (qui est l'image),
+    */ 
+    Route::post('/categories', [CategoryController::class, 'store']); //verifié
 
-        /* route pour recuperer une categorie de produit grace à son id | Contraintes: seul le seller peut acceder 
-        Params: id
-        */ 
-        Route::get('/categories/show/{category}', [CategoryController::class, 'show']); //verifié
-
-
-        /* route pour modifier une categorie de produit | Contraintes: seller et admin
-        Params:category_id (peut etre null. c'est dans le cas ou on voudrait avoir une sous categorie), name, description,
-        profile (qui est l'image)
-        */
-        Route::put('/categories/update/{category}', [CategoryController::class, 'update']); // verifié
-
-        
-        /* route pour supprimer une categorie de produit | Contraintes: seller et admin
-        Params: id( de la categorie)
-        */
-        Route::delete('/categories/delete/{category}', [CategoryController::class, 'destroy']); // verifié
-
-    // Attributes
-        /* route pour afficher la liste des attributs| Contraintes: admin et seller 
-        Params: name
-        */ 
-        Route::get('/attributes', [AtributeController::class, 'index']); //verifié
-
-        /* route pour enregistrer un attribut| Contraintes: admin et seller 
-        Params: name
-        */ 
-        Route::post('/attributes', [AtributeController::class, 'store']); //verifié
+    /* route pour recuperer une categorie de produit grace à son id | Contraintes: seul le seller peut acceder 
+    Params: id
+    */ 
+    Route::get('/categories/show/{category}', [CategoryController::class, 'show']); //verifié
 
 
-        /* route pour modifier un attributs| Contraintes: admin et seller 
-        Params: name
-        */ 
-        Route::put('/attributes/update/{attribute}', [AtributeController::class, 'update']); //verifié
+    /* route pour modifier une categorie de produit | Contraintes: seller et admin
+    Params:category_id (peut etre null. c'est dans le cas ou on voudrait avoir une sous categorie), name, description,
+    profile (qui est l'image)
+    */
+    Route::post('/categories/update/{category}', [CategoryController::class, 'update']); // verifié
 
-    // Properties
-
-        /* route pour la liste des properties | Contraintes: admin et seller 
-        Params: atribute_id, value
-        */ 
-        Route::get('/properties', [PropertyController::class, 'index']); //verifié
-
-        /* route pour enregistrer une property| Contraintes: admin et seller 
-        Params: atribute_id, value
-        */ 
-        Route::post('/properties', [PropertyController::class, 'store']); //verifié
-
-        /* route pour modifier une property| Contraintes: admin et seller 
-        Params: atribute_id, value
-        */ 
-        Route::put('/properties/update/{property}', [PropertyController::class, 'update']); //verifié
-
-
-    // Settings
-        /* route pour afficher la liste des settings| Contraintes: admin et seller 
-        Params: name
-        */ 
-        Route::get('/settings', [SettingController::class, 'index']); //verifié
-
-        /* route pour enregistrer un setting| Contraintes: admin et seller 
-        Params: name
-        */ 
-        Route::post('/settings', [SettingController::class, 'store']); //verifié
-
-
-        /* route pour modifier un settings| Contraintes: admin et seller 
-        Params: name
-        */ 
-        Route::put('/settings/update/{setting}', [SettingController::class, 'update']); //verifié
     
+    /* route pour supprimer une categorie de produit | Contraintes: seller et admin
+    Params: id( de la categorie)
+    */
+    Route::delete('/categories/delete/{category}', [CategoryController::class, 'destroy']); // verifié
 
-    // Countries
-        /* route pour afficher la liste des countries| Contraintes: admin et seller 
-        Params: name
-        */ 
-        Route::get('/countries', [CountryController::class, 'index']); //verifié
+// Attributes
+    /* route pour afficher la liste des attributs| Contraintes: admin et seller 
+    Params: name
+    */ 
+    Route::get('/attributes', [AtributeController::class, 'index']); //verifié
 
-        /* route pour enregistrer un country| Contraintes: admin et seller 
-        Params: name
-        */ 
-        Route::post('/countries', [CountryController::class, 'store']); //verifié
-
-
-        /* route pour modifier un country| Contraintes: admin et seller 
-        Params: name
-        */ 
-        Route::put('/countries/update/{country}', [CountryController::class, 'update']); //verifié
-
-    // Qwaters
-        /* route pour afficher la liste des qwaters| Contraintes: admin et seller 
-        Params: name
-        */ 
-        Route::get('/qwaters', [QwaterController::class, 'index']); //verifié
-
-        /* route pour enregistrer un qwater| Contraintes: admin et seller 
-        Params: name
-        */ 
-        Route::post('/qwaters', [QwaterController::class, 'store']); //verifié
+    /* route pour enregistrer un attribut| Contraintes: admin et seller 
+    Params: name
+    */ 
+    Route::post('/attributes', [AtributeController::class, 'store']); //verifié
 
 
-        /* route pour modifier un qwater| Contraintes: admin et seller 
-        Params: name
-        */ 
-        Route::put('/qwaters/update/{qwater}', [QwaterController::class, 'update']); //verifié
+    /* route pour modifier un attributs| Contraintes: admin et seller 
+    Params: name
+    */ 
+    Route::put('/attributes/update/{attribute}', [AtributeController::class, 'update']); //verifié
+
+    Route::delete('/attributes/delete/{attribute}', [AtributeController::class, 'destroy']); //verifié
 
 
-    // Cities
-        /* route pour afficher la liste des cities| Contraintes: admin et seller 
-        Params: name
-        */ 
-        Route::get('/cities', [CityController::class, 'index']); //verifié
+// Properties
 
-        /* route pour enregistrer un city| Contraintes: admin et seller 
-        Params: name
-        */ 
-        Route::post('/cities', [CityController::class, 'store']); //verifié
+    /* route pour la liste des properties | Contraintes: admin et seller 
+    Params: atribute_id, value
+    */ 
+    Route::get('/properties', [PropertyController::class, 'index']); //verifié
 
+    /* route pour enregistrer une property| Contraintes: admin et seller 
+    Params: atribute_id, value
+    */ 
+    Route::post('/properties', [PropertyController::class, 'store']); //verifié
 
-        /* route pour modifier un city| Contraintes: admin et seller 
-        Params: name
-        */ 
-        Route::put('/cities/update/{city}', [CityController::class, 'update']); //verifié
+    /* route pour modifier une property| Contraintes: admin et seller 
+    Params: atribute_id, value
+    */ 
+    Route::put('/properties/update/{property}', [PropertyController::class, 'update']); //verifié
 
-    // Commandes
-
-        /* route afficher la liste des commandes | Contraintes: admin et seller
-        Params: aucun
-        */
-        Route::get('/commandes', [CommandController::class, 'index']); //verifié
+    Route::delete('/properties/delete/{property}', [PropertyController::class, 'destroy']); //verifié
 
 
-        /* route pour la liste des commandes | Contraintes: admin et seller
-        Params: state(optionel et prend les valeurs init, enabled et diasbled)
-        Cas d'utilisation: si state n'existe pas alors toutes les commandes sont renvoyées
-                           sinon les commandes dont le state est renseign"e seront renvoyés
-        */
 
-        Route::get('/commandes/{state?}', [CommandController::class, 'index']); // verifié
+// Settings
+    /* route pour afficher la liste des settings| Contraintes: admin et seller 
+    Params: name
+    */ 
+    Route::get('/settings', [SettingController::class, 'index']); //verifié
+
+    /* route pour enregistrer un setting| Contraintes: admin et seller 
+    Params: name
+    */ 
+    Route::post('/settings', [SettingController::class, 'store']); //verifié
 
 
-        /* route pour initier les commandes | Contraintes: utilisateurs uniquement
-        Params: payment_id(optionel)
-        , qwater_id(pour le quartier de livraison), qwater_name(optionel), city_id(optionel), city_name(optionel), 
-        country_id(optionel), country_name(optionel), 
-        Cas d'utilisation: si qwater_id n'existe pas && city_id n'existe pas && country_id n'existe pas il faut les params
-        country_name, city_name et qwater_name afin de creer le country, city, qwater
-                           si qwater_id n'existe pas && city_id n'existe pas && country_id existe il faut les params
-        city_name et qwater_name afin de creer la city et le qwater
-                           si qwater_id n'existe pas && city_id existe il faut le param qwater_name afin de creer le qwater
-        */
-        Route::post('/commandes', [CommandController::class, 'store']); // verifié
+    /* route pour modifier un settings| Contraintes: admin et seller 
+    Params: name
+    */ 
+    Route::put('/settings/update/{setting}', [SettingController::class, 'update']); //verifié
 
-        /* route afficher l'historique des commandes de l'utilisateur | Contraintes: seul l'user concerné
-        Params: aucun
-        */
-        Route::get('commandes/users/history', [CommandController::class, 'usersHistory']); //verifié
+    Route::delete('/settings/delete/{setting}', [SettingController::class, 'destroy']); //verifié
 
-        /* route pour supprimer une commande | Contraintes: seller et admin
-        Params: id( de la categorie)
-        */
+
+
+// Countries
+    /* route pour afficher la liste des countries| Contraintes: admin et seller 
+    Params: name
+    */ 
+    Route::get('/countries', [CountryController::class, 'index']); //verifié
+
+    /* route pour enregistrer un country| Contraintes: admin et seller 
+    Params: name
+    */ 
+    Route::post('/countries', [CountryController::class, 'store']); //verifié
+
+
+    /* route pour modifier un country| Contraintes: admin et seller 
+    Params: name
+    */ 
+    Route::put('/countries/update/{country}', [CountryController::class, 'update']); //verifié
+    Route::delete('/countries/delete/{country}', [CountryController::class, 'destroy']); //verifié
+
+// Qwaters
+    /* route pour afficher la liste des qwaters| Contraintes: admin et seller 
+    Params: name
+    */ 
+    Route::get('/qwaters', [QwaterController::class, 'index']); //verifié
+
+    /* route pour enregistrer un qwater| Contraintes: admin et seller 
+    Params: name
+    */ 
+    Route::post('/qwaters', [QwaterController::class, 'store']); //verifié
+
+
+    /* route pour modifier un qwater| Contraintes: admin et seller 
+    Params: name
+    */ 
+    Route::put('/qwaters/update/{qwater}', [QwaterController::class, 'update']); //verifié
+    Route::delete('/qwaters/delete/{qwater}', [QwaterController::class, 'destroy']); //verifié
+
+
+// Cities
+    /* route pour afficher la liste des cities| Contraintes: admin et seller 
+    Params: name
+    */ 
+    Route::get('/cities', [CityController::class, 'index']); //verifié
+
+    /* route pour enregistrer un city| Contraintes: admin et seller 
+    Params: name
+    */ 
+    Route::post('/cities', [CityController::class, 'store']); //verifié
+
+
+    /* route pour modifier un city| Contraintes: admin et seller 
+    Params: name
+    */ 
+    Route::put('/cities/update/{city}', [CityController::class, 'update']); //verifié
+    Route::delete('/cities/delete/{city}', [CityController::class, 'destroy']); //verifié
+
+// Commandes
+
+    /* route afficher la liste des commandes | Contraintes: admin et seller
+    Params: aucun
+    */
+    Route::get('/commandes', [CommandController::class, 'index']); //verifié
+
+
+    /* route pour la liste des commandes | Contraintes: admin et seller
+    Params: state(optionel et prend les valeurs init, enabled et diasbled)
+    Cas d'utilisation: si state n'existe pas alors toutes les commandes sont renvoyées
+                        sinon les commandes dont le state est renseign"e seront renvoyés
+    */
+
+    Route::get('/commandes/{state?}', [CommandController::class, 'index']); // verifié
+
+
+    /* route pour initier les commandes | Contraintes: utilisateurs uniquement
+    Params: payment_id(optionel)
+    , qwater_id(pour le quartier de livraison), qwater_name(optionel), city_id(optionel), city_name(optionel), 
+    country_id(optionel), country_name(optionel), 
+    Cas d'utilisation: si qwater_id n'existe pas && city_id n'existe pas && country_id n'existe pas il faut les params
+    country_name, city_name et qwater_name afin de creer le country, city, qwater
+                        si qwater_id n'existe pas && city_id n'existe pas && country_id existe il faut les params
+    city_name et qwater_name afin de creer la city et le qwater
+                        si qwater_id n'existe pas && city_id existe il faut le param qwater_name afin de creer le qwater
+    */
+    Route::post('/commandes', [CommandController::class, 'store']); // verifié
+
+    /* route afficher l'historique des commandes de l'utilisateur | Contraintes: seul l'user concerné
+    Params: aucun
+    */
+    Route::get('commandes/users/history', [CommandController::class, 'usersHistory']); //verifié
+
+    /* route pour supprimer une commande | Contraintes: seller et admin
+    Params: id( de la categorie)
+    */
+
+    Route::delete('/commandes/delete', [CommandController::class, 'destroy']); 
+
+
+
+// CommandsLines
+    /* route pour lister les produits de la commandes | Contraintes: user, seller et admin
+    Params: quantity, product_id, attributes_values(s'il y'en a) et id (pour la commande)
+    */
+    Route::get('/commandeslines/{id}', [CommandLineController::class, 'index']);  // verifié
+
+
+    /* route pour ajouter un produit à une commande sans passer par le panier | Contraintes: user, seller et admin
+    Params: quantity, product_id, attributes_values(s'il y'en a) et id (pour la commande)
+    */
+    Route::post('/commandeslines', [CommandLineController::class, 'store']);  // verifié
+
+
+    /* route pour modifier une ligne de commande | Contraintes: user, seller et admin
+    Params: quantity, product_id, attributes_values(s'il y'en a) et id (pour la commande)
+    */
+    Route::put('/commandeslines/update/{commandLine}', [CommandLineController::class, 'update']);  // verifié
+
+
+    /* route pour notifié de la confirmation de la commandes | Contraintes: sellers et admin
+    Params: id (de la ligne de commande), state(
+        delivered pour dire que le fournisseur a livrer la commande, 
+        confirmed pour dire que le fournisseur livrera, 
+        cancel pour dire que l'utilisateur annule sa commande), message(message de la notification)
+    */
+    Route::post('/commandeslines/state/{commandLine}', [CommandLineController::class, 'state']);  // verifié
+    Route::delete('/commandeslines/delete/{commandline}', [CommandLineController::class, 'state']);  // verifié
+
     
-        Route::delete('/commandes/delete', [CommandController::class, 'destroy']); 
-
-
-
-    // CommandsLines
-        /* route pour lister les produits de la commandes | Contraintes: user, seller et admin
-        Params: quantity, product_id, attributes_values(s'il y'en a) et id (pour la commande)
-        */
-        Route::get('/commandeslines/{id}', [CommandLineController::class, 'index']);  // verifié
-
-
-        /* route pour ajouter un produit à une commande sans passer par le panier | Contraintes: user, seller et admin
-        Params: quantity, product_id, attributes_values(s'il y'en a) et id (pour la commande)
-        */
-        Route::post('/commandeslines', [CommandLineController::class, 'store']);  // verifié
-
-
-        /* route pour modifier une ligne de commande | Contraintes: user, seller et admin
-        Params: quantity, product_id, attributes_values(s'il y'en a) et id (pour la commande)
-        */
-        Route::put('/commandeslines/update/{commandLine}', [CommandLineController::class, 'update']);  // verifié
-
-
-        /* route pour notifié de la confirmation de la commandes | Contraintes: sellers et admin
-        Params: id (de la ligne de commande), state(
-            delivered pour dire que le fournisseur a livrer la commande, 
-            confirmed pour dire que le fournisseur livrera, 
-            cancel pour dire que l'utilisateur annule sa commande), message(message de la notification)
-        */
-        Route::post('/commandeslines/state/{commandLine}', [CommandLineController::class, 'state']);  // verifié
-
-        
-    // Attribut de produit
+// Attribut de produit
         /* route pour la liste des attributs d'un produit| Contraintes: admin et seller 
         Params: id du produit
         */ 
@@ -357,6 +388,9 @@ use App\Http\Controllers\AtributeProductController;
         Params: atribute_id, product_id
         */ 
         Route::post('/attributeProducts', [AtributeProductController::class, 'store']); //verifié
+        Route::delete('/attributeProducts/delete/{attributeproduct}', [AtributeProductController::class, 'destroy']); //verifié
+
+
 
 Route::middleware('auth:sanctum')->group(function () {  
     

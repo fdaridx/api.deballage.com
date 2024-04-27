@@ -65,7 +65,7 @@
                                         <div x-on:click='redirect(line.edit_url)' class="pointer badge bg-warning text-white rounded-pill">
                                             edit</div>
                                             <div x-text='line.state' x-on:click='redirect(line.state_url)' class="pointer badge bg-primary text-white rounded-pill"></div>
-                                        <button class="btn btn-datatable btn-icon btn-transparent-dark"><svg
+                                            <div x-bind:id='line.id' x-bind:url="`lines`" onclick="del(this)" class="btn btn-datatable btn-icon btn-transparent-dark"><svg
                                                 xmlns="http://www.w3.org/2000/svg" width="24" height="24"
                                                 viewBox="0 0 24 24" fill="none" stroke="currentColor"
                                                 stroke-width="2" stroke-linecap="round"
@@ -76,7 +76,7 @@
                                                 </path>
                                                 <line x1="10" y1="11" x2="10" y2="17"></line>
                                                 <line x1="14" y1="11" x2="14" y2="17"></line>
-                                            </svg></button>
+                                            </svg></div>
                                     </td>
                                 </tr>
                             </template>

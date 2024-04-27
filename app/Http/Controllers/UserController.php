@@ -8,7 +8,7 @@ use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Gate;
-
+use Illuminate\Support\Facades\DB;
 class UserController extends Controller
 {
 
@@ -17,6 +17,8 @@ class UserController extends Controller
         // if (!Gate::allows('viewAny', $request->user())) abort(403);
         $users = User::with(['shop'])->orderByDesc('id')->get()->map(function ($user) {
             $user->edit_url = route('users.edit', $user->id);
+            $user->state_url = route('users.state', $user->id);
+            $user->shop_edit_url = isset($user->shop->id) ? route('shops.edit', $user->shop->id) : '';
             return $user;
         });
         return response()->json($users, 200);
@@ -109,7 +111,7 @@ class UserController extends Controller
     public function show(User $user)
     {
         // if (!Gate::allows('show', $request->user())) abort(403);
-        return response()->json($user, 200);
+        return response()->json($user->with(['shop'])->get()[0], 200);
     }
 
     public function edit(Request $request)
@@ -164,14 +166,25 @@ class UserController extends Controller
         if (!self::validate($request->email, 'string', 'email')) $messages[] = 'Adresse e-mail incorrect';
         
         if(count($messages) == 0){
-            if (!Auth::attempt(['email' => strtolower($request->email), 'password' => strtolower($request->password)])) return response()->json(['message' => 'Identifiants incorrect !'], 401);
-    
-            $token = $request->user()->createToken('authToken');
+            if (!Auth::attempt(['email' => strtolower($request->email), 'password' => strtolower($request->password), 'state' => 'enabled'])) return response()->json(['message' => 'Identifiants incorrect !'], 401);
+            
+            $request->user()->tokens()->delete();
+            $token = $request->user()->createToken('authToken', ['new:user']);
+
+            // $token->expires_at = now()->addMinutes(30);
+            // now()->addMinutes(30)
+            
             return response()->json([
+                'message' => 'Connexion reussi',
                 'user' => Auth::user(),
                 'access_token' => $token->plainTextToken,
-                'token_type' => 'bearer'
             ], 200);
+
+            // return view('admin.dashboard', [
+            //     'message' => 'Connexion reussi',
+            //     'user' => Auth::user(),
+            //     'access_token' => $token->plainTextToken,
+            // ]);
         }
         else {
             return response()->json([
@@ -183,7 +196,7 @@ class UserController extends Controller
     public function logout (User $user)   
     {
         $user->tokens()->delete();  
-        return response(['message' => 'Deconnexion ...'],200);     
+        return to_route('login');     
     }
 
     public function password ($old = null, $new, User $user = null)   

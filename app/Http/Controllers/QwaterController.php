@@ -81,6 +81,7 @@ class QwaterController extends Controller
 
     public function destroy(Qwater $qwater)
     {
-        //
+        $qwater->delete();
+        return response(200);
     }
 }

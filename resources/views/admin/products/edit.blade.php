@@ -101,7 +101,7 @@
                 formData.append('name', $('#name').val());
                 formData.append('description', $('#description').val());
 
-                axios.put('/api/products/update/'+ $('#id').val(), formData, {
+                axios.post('/api/products/update/'+ $('#id').val(), formData, {
                     headers: {
                         'Content-Type': 'multipart/form-data',
                     },

@@ -81,8 +81,9 @@ class AtributeController extends Controller
         }
     }
 
-    public function destroy(Atribute $atribute)
+    public function destroy(Atribute $attribute)
     {
-        //
+        $attribute->delete();
+        return response(200);
     }
 }

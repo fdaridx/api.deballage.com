@@ -57,7 +57,8 @@ class CategoryController extends Controller
                         'category_id' => $request->category_id ?? null,
                         'name' => strtolower($request->name),
                         'description' => strtolower($request->description),
-                        'profile' => Storage::disk('public')->put(uniqid().'.jpg', base64_decode($request->file('profile'))),
+                        'profile' => $request->file('profile')->storeAs('', $request->file('profile')->getClientOriginalName()),
+                   
                     ]);
                     return response()->json(['message' => 'Categorie crée avec succès !'], 200);
                 }
@@ -90,7 +91,7 @@ class CategoryController extends Controller
         $new_category = Category::where('name', strtolower($request->name))->get();
 
         if ($new_category->isEmpty()) {
-            if ($request->file('profile') == null || empty($request->file('profile'))) {
+            if ($request->file('profile') == null || empty($request->file('profile')) || $request->file('profile') == 'undefined') {
                 $category->update([
                     'category_id' => $request->category_id ?? null,
                     'name' => strtolower($request->name),
@@ -102,7 +103,7 @@ class CategoryController extends Controller
                     'category_id' => $request->category_id ?? null,
                     'name' => strtolower($request->name),
                     'description' => strtolower($request->description),
-                    'path' => Storage::disk('')->put(uniqid().'.jpg', base64_decode($request->file('profile'))),
+                    'profile' => $request->file('profile')->storeAs('', $request->file('profile')->getClientOriginalName()),
                 ]);
                 return response()->json(['message' => 'Categorie modifiée avec succès !'], 200);
             }

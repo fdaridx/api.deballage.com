@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="en">
 
@@ -477,16 +478,16 @@
             <!-- User Dropdown-->
             <li class="nav-item dropdown no-caret dropdown-user me-3 me-lg-4">
                 <a class="btn btn-icon btn-transparent-dark dropdown-toggle" id="navbarDropdownUserImage" href="javascript:void(0);" role="button" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><img class="img-fluid" src="assets/img/illustrations/profiles/profile-1.png"></a>
-                <div class="dropdown-menu dropdown-menu-end border-0 shadow animated--fade-in-up" aria-labelledby="navbarDropdownUserImage">
+                <div x-data='xlien' class="dropdown-menu dropdown-menu-end border-0 shadow animated--fade-in-up" aria-labelledby="navbarDropdownUserImage">
                     <h6 class="dropdown-header d-flex align-items-center">
                         <img class="dropdown-user-img" src="assets/img/illustrations/profiles/profile-1.png">
                         <div class="dropdown-user-details">
-                            <div class="dropdown-user-details-name">Valerie Luna</div>
+                            {{-- <div class="dropdown-user-details-name">{{ ucwords(Auth::user()->first_name).' '.ucwords(Auth::user()->last_name) }}</div> --}}
                             <div class="dropdown-user-details-email">vluna@aol.com</div>
                         </div>
                     </h6>
                     <div class="dropdown-divider"></div>
-                    <a class="dropdown-item" href="#!">
+                    <a class="dropdown-item" x-on:click='redirect("/users/edit/{{ 1 }}")'>
                         <div class="dropdown-item-icon"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-settings">
                                 <circle cx="12" cy="12" r="3"></circle>
                                 <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z">
@@ -494,11 +495,12 @@
                             </svg></div>
                         Account
                     </a>
-                    <a class="dropdown-item" href="#!">
+                    <a class="dropdown-item" x-on:click='redirect("/api/logout/{{ 1 }}")'>
                         <div class="dropdown-item-icon"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-log-out">
                                 <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path>
                                 <polyline points="16 17 21 12 16 7"></polyline>
-                                <line x1="21" y1="12" x2="9" y2="12"></line>
+                                <line x1="21" y1="12" x2="9" y2="
+                                12"></line>
                             </svg></div>
                         Logout
                     </a>
@@ -536,7 +538,7 @@
                             <span class="badge bg-success-soft text-success ms-auto">2 New!</span>
                         </a>
 
-                        <a class="nav-link " href="#">
+                        <a class="nav-link " x-on:click='redirect("{{ Route('dashboard') }}" )'>
                             <div class="nav-link-icon"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-grid">
                                     <rect x="3" y="3" width="7" height="7"></rect>
                                     <rect x="14" y="3" width="7" height="7"></rect>
@@ -569,6 +571,18 @@
                                 </svg>
                             </div>
                             Categories
+                        </a>
+
+                        <a class="pointer nav-link collapsed" x-on:click='redirect( "{{ Route('shops.index') }}" )'>
+                            <div class="nav-link-icon">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-grid">
+                                    <rect x="3" y="3" width="7" height="7"></rect>
+                                    <rect x="14" y="3" width="7" height="7"></rect>
+                                    <rect x="14" y="14" width="7" height="7"></rect>
+                                    <rect x="3" y="14" width="7" height="7"></rect>
+                                </svg>
+                            </div>
+                            Shops
                         </a>
 
                         <a class="pointer nav-link collapsed" x-on:click='redirect( "{{ Route('commandes.index') }}" )'>
@@ -696,8 +710,8 @@
                 <!-- Sidenav Footer-->
                 <div class="sidenav-footer">
                     <div class="sidenav-footer-content">
-                        <div class="sidenav-footer-subtitle">Logged in as:</div>
-                        <div class="sidenav-footer-title">Valerie Luna</div>
+                        {{-- <div class="sidenav-footer-subtitle">{{ Auth::user()->email }}</div> --}}
+                        {{-- <div class="sidenav-footer-title">{{ ucwords(Auth::user()->first_name).' '.ucwords(Auth::user()->last_name) }}</div> --}}
                     </div>
                 </div>
             </nav>
@@ -720,6 +734,23 @@
             </footer>
         </div>
     </div> 
+
+    <script>
+        // window.addEventListener('beforeunload', function (e) {
+        //     e.preventDefault();
+        //     (e || window.e).returnValue = "sure ?";
+        //     return = "sure ?";
+        // });
+        function del(param) {
+            const id = $(param).attr('id');
+            const url = $(param).attr('url');
+
+            axios.delete('/api/'+url+'/delete/'+id)
+            .then((response) => { 
+                redirect("/"+ url); 
+            })
+        }
+    </script>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js" crossorigin="anonymous"></script>
     <script src="https://sb-admin-pro.startbootstrap.com/js/scripts.js"></script>
@@ -775,7 +806,6 @@
     </script>
     <iframe height="1" width="1" style="position: absolute; top: 0px; left: 0px; border: none; visibility: hidden;"></iframe>
     <script defer="" src="https://static.cloudflareinsights.com/beacon.min.js/vaafb692b2aea4879b33c060e79fe94621666317369993" integrity="sha512-0ahDYl866UMhKuYcW078ScMalXqtFJggm7TmlUtp0UlD4eQk0Ixfnm5ykXKvGJNFjLMoortdseTfsRT8oCfgGA==" data-cf-beacon="{&quot;rayId&quot;:&quot;77e16859faa6b7a8&quot;,&quot;token&quot;:&quot;6e2c2575ac8f44ed824cef7899ba8463&quot;,&quot;version&quot;:&quot;2022.11.3&quot;,&quot;si&quot;:100}" crossorigin="anonymous"></script>
-
 
     <div class="litepicker" style="display: none;" data-plugins="ranges" data-ranges-position="left">
         <div class="container__main">

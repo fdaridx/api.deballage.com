@@ -18,9 +18,11 @@
     <title>Deballage | Login</title>
     <link rel="stylesheet" href="{{ asset('dist/output.css') }}">
     
+    <script defer src="{{ asset('scripts/alpine.js') }}"></script>
     <script src="{{ asset('scripts/jquery.js') }}"></script>
     <script src="{{ asset('scripts/axios.js') }}"></script>
     <script src="{{ asset('scripts/alert.js') }}"></script>
+    <script src="{{ asset('scripts/index.js') }}"></script>
 </head>
 <body>
     <main class="w-full md:h-full md:py-8 h-screen py-[120px] px-[16px] xl:h-screen flex items-center bg-[#F1F3F6] md:px-10">
@@ -30,7 +32,7 @@
                     <div class="logo flex justify-center"><a href="{{ Route('index') }}"><img class="w-[140px]" src="{{ asset('images/pngs/logo-white.png') }}" alt=""></a></div>
                     <div class="py-5 flex items-center flex-col">
                         <h1 class="text-[22px] xl:text-[32px] font-bold">Connexion a votre compte</h1>
-                        <p class="font-thin text-sm lg:text-[16px] mt-2">Access your account with phone number or email.</p>
+                        <p class="font-thin text-sm lg:text-[16px] mt-2">Access your account with email.</p>
                     </div>
                     <div class="pt-[20px] flex flex-col gap-y-[21px]">
                         <div class="form-group">
@@ -68,6 +70,10 @@
     </main>
     <script>
         $(function () {
+            // if (localStorage.getItem('auth_token')) {
+            //     $('title').html('Dashboard | Deballage');
+            //     redirect(document.referrer);
+            // }
             $('#connection').click(function (e) {
                 e.preventDefault();
                 axios.post('api/authenticate', {
@@ -76,61 +82,16 @@
                 })
                 .then(response => {
                     if (response.status === 200) {
-                        swal({
-                            title: 'Message',
-                            text: "Connecté avec succès !",
-                            icon: "success",
-                            buttons: {
-                                confirm: {
-                                    text: "Ok",
-                                    value: null,
-                                    visible: false,
-                                    className: "bt new align-center",
-                                    closeModal: true
-                                }
-                            },
-                            timer: 10000,
-                        })
+                        localStorage.setItem('auth_token', response.data.access_token);
+                        $('title').html('Dashboard | Deballage');
+                        if (response.data.user.type == 'admin') {
+                            redirect("{{ Route('dashboard') }}");
+                        } else {
+                            redirect("{{ Route('user-dashboard') }}");
+                        }
                     }
                 })
-                .catch(response => {
-                    if (response) {
-                        swal({
-                            title: 'Message',
-                            text: "Identifiants de connection incorrect !",
-                            icon: "error",
-                            buttons: {
-                                confirm: {
-                                    text: "Ok",
-                                    value: null,
-                                    visible: false,
-                                    className: "bt new align-center",
-                                    closeModal: true
-                                }
-                            },
-                            timer: 10000,
-                        })
-                    }
-                })
-                // if ($('#user_password').val() === $('#user_confirm_password').val()) {
-                    
-                // } else {
-                //     swal({
-                //         title: 'Message',
-                //         text: "Mot de passe incorrect",
-                //         icon: "error",
-                //         buttons: {
-                //             confirm: {
-                //                 text: "Ok",
-                //                 value: null,
-                //                 visible: false,
-                //                 className: "bt new align-center",
-                //                 closeModal: true
-                //             }
-                //         },
-                //         timer: 10000,
-                //     })
-                // }
+                .catch(response => { console.log(response); })
             })
         })
     </script>

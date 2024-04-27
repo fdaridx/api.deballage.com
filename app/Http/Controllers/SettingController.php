@@ -81,6 +81,7 @@ class SettingController extends Controller
 
     public function destroy(Setting $setting)
     {
-        //
+        $setting->delete();
+        return response(200);
     }
 }

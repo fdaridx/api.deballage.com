@@ -12,9 +12,9 @@
                                 class="feather feather-activity">
                                 <polyline points="22 12 18 12 15 21 9 3 6 12 2 12"></polyline>
                             </svg></div>
-                            Qwaters
+                            Shops
                     </h1>
-                    <div class="page-header-subtitle">Here are all your Qwaters
+                    <div class="page-header-subtitle">Here are all your Shops
                     </div>
                 </div>
                 <div class="col-12 col-xl-auto mt-4">
@@ -40,31 +40,34 @@
 <div class="container-xl px-4 mt-n10">
     <div class="card mb-4">
         <div class="card-header"><div class="" style="display: flex;justify-content:space-between">
-            <div>list of Qwaters </div>
+            <div>list of Shops </div>
             <div class="badge bg-primary text-white rounded-pill" x-data='xlien'>
-                <a x-on:click='redirect( "{{ Route('qwaters.create') }}" )' class="text-white pointer">Add</a> 
+                <a x-on:click='redirect( "{{ Route('shops.create') }}" )' class="text-white pointer">Add</a> 
             </div>
         </div></div>
-        <div class="card-body" x-data='xdatas("qwaters", 5)'>
+        <div class="card-body" x-data='xdatas("shops", 5)'>
             <div class="dataTable-wrapper dataTable-loading no-footer sortable searchable fixed-columns">
                 <div class="dataTable-container">
                     <table class="dataTable-table">
                         <thead>
                             <tr>
-                                <th>City</th>
+                                <th>Gerant</th>
                                 <th>Name</th>
                                 <th>Actions</th>
                             </tr>
                         </thead>
                         <tbody>
-                            <template x-for='qwater in datas'>
+                            <template x-for='shop in datas'>
                                 <tr>
-                                    <td x-text='ucword(qwater.city.name)'></td>
-                                    <td x-text='ucword(qwater.name)'></td>
+                                    <td x-text='ucword(`${shop.user.first_name} ${shop.user.last_name}`)'></td>
+                                    <td x-text='ucword(shop.intitule)'></td>
+                                    
                                     <td>
-                                        <div x-on:click='redirect(qwater.edit_url)' class="pointer badge bg-warning text-white rounded-pill">
+                                        <div x-on:click='redirect(shop.edit_url)' class="pointer badge bg-warning text-white rounded-pill">
                                             edit</div>
-                                            <div x-bind:id='qwater.id' x-bind:url="`qwaters`" onclick="del(this)" class="btn btn-datatable btn-icon btn-transparent-dark"><svg
+                                                                            
+                                        <div x-bind:id='shop.id' x-bind:url="`shops`" onclick="del(this)" class="btn btn-datatable btn-icon btn-transparent-dark">
+                                            <svg 
                                                 xmlns="http://www.w3.org/2000/svg" width="24" height="24"
                                                 viewBox="0 0 24 24" fill="none" stroke="currentColor"
                                                 stroke-width="2" stroke-linecap="round"
@@ -83,23 +86,22 @@
                     </table>
                 </div>
                 <div class="dataTable-bottom">
-                    <template x-if='lengthData > item'>
-                        <div class="dataTable-info" x-text="`Showing ${nbElt} of ${lengthData} entries`"></div>
-                        <nav class="dataTable-pagination">
-                            <ul class="dataTable-pagination-list">
-                                <template x-for="i in Math.ceil(lengthData/item)">
-                                    <li class=""><a x-on:click='change(i)' x-text='i'></a></li>
-                                </template>
-                                {{-- <li class="active"><a href="#" data-page="1">1</a></li> --}}
-                                
-                                {{-- <li class="pager"><a href="#" data-page="2">›</a></li> --}}
-                            </ul>
-                        </nav>
-                    </template>
+                    <div class="dataTable-info" x-text="`Showing ${nbElt} of ${lengthData} entries`"></div>
+                    <nav class="dataTable-pagination">
+                        <ul class="dataTable-pagination-list">
+                            <template x-for="i in Math.ceil(lengthData/item)">
+                                <li class=""><a x-on:click='change(i)' x-text='i'></a></li>
+                            </template>
+                            {{-- <li class="active"><a href="#" data-page="1">1</a></li> --}}
+                            
+                            {{-- <li class="pager"><a href="#" data-page="2">›</a></li> --}}
+                        </ul>
+                    </nav>
                 </div>
             </div>
         </div>
     </div>
 </div>
+
 @endsection
 
