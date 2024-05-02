@@ -16,11 +16,15 @@ class CommandController extends Controller
 {
     public function index($state = null)
     {
-        return $state ? response()->json(Command::where('state', $state)::with('commandlines')->get()->map(function ($command) {
+        return $state ? response()->json(Command::where('state', $state)::with(['commandlines' => function ($query) {
+            $query->with(['products']);
+        }])->get()->map(function ($command) {
             $command->details_url = route('commandes.details', $command->id);
             return $command;
         }), 200) 
-        : response()->json(Command::with(['commandlines', 'user', 'qwater' => function ($query) {
+        : response()->json(Command::with(['commandlines' => function ($query) {
+            $query->with(['product']);
+        }, 'user', 'qwater' => function ($query) {
             $query->with(['city' => function ($query) {
                 $query->with(['country']);
             }]);
@@ -28,6 +32,22 @@ class CommandController extends Controller
             $command->details_url = route('commandes.details', $command->id);
             return $command;
         }), 200);
+    }
+
+    public function price()
+    {
+        $price = 0;
+        foreach (Command::where('state', 'disabled')->with(['commandlines' => function ($query) {
+            $query->with(['product']);
+        }])->get() as $command) {
+            foreach ($command->commandlines as $commandlines) {
+                $price += $commandlines->product->price * $commandlines->quantity;
+            }
+        }
+        return response()->json([[
+            'price' => $price,
+            'command_count' => Command::where('state', 'disabled')->count(),
+        ]], 200);
     }
 
     public function create()

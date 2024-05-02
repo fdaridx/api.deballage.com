@@ -723,7 +723,7 @@
             <footer class="footer-admin mt-auto footer-light">
                 <div class="container-xl px-4">
                     <div class="row">
-                        <div class="col-md-6 small">Copyright © Codec 2024</div>
+                        <div class="col-md-6 small">Copyright © Your Website 2021</div>
                         <div class="col-md-6 text-md-end small">
                             <a href="#!">Privacy Policy</a>
                             ·
@@ -733,8 +733,7 @@
                 </div>
             </footer>
         </div>
-    </div> 
-
+    </div>
     <script>
         // window.addEventListener('beforeunload', function (e) {
         //     e.preventDefault();
@@ -752,72 +751,130 @@
         }
     </script>
 
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"
+        crossorigin="anonymous"></script>
     <script src="https://sb-admin-pro.startbootstrap.com/js/scripts.js"></script>
-    {{-- <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.9.4/Chart.min.js" crossorigin="anonymous"></script> --}}
-    {{-- <script src="https://sb-admin-pro.startbootstrap.com/assets/demo/chart-area-demo.js"></script> --}}
-    {{-- <script src="https://sb-admin-pro.startbootstrap.com/assets/demo/chart-bar-demo.js"></script> --}}
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.9.4/Chart.min.js" crossorigin="anonymous"></script>
+    <script src="https://sb-admin-pro.startbootstrap.com/assets/demo/chart-area-demo.js"></script>
+    <script src="https://sb-admin-pro.startbootstrap.com/assets/demo/chart-bar-demo.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/simple-datatables@latest" crossorigin="anonymous"></script>
     <script src="https://sb-admin-pro.startbootstrap.com/js/datatables/datatables-simple-demo.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/litepicker/dist/bundle.js" crossorigin="anonymous"></script>
     <script src="https://sb-admin-pro.startbootstrap.com/js/litepicker.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.9.4/Chart.min.js" crossorigin="anonymous"></script>
+    <script src="https://assets.startbootstrap.com/js/sb-customizer.js"></script>
+    <script src="https://sb-admin-pro.startbootstrap.com/assets/demo/chart-pie-demo.js"></script>
 
-    {{-- <script src="https://assets.startbootstrap.com/js/sb-customizer.js"></script> --}}
+    <sb-customizer project="sb-admin-pro" _nghost-qgw-c10="" ng-version="11.1.2">
+        <div _ngcontent-qgw-c10="" id="style-switcher" class="sb-customizer sb-customizer-closed"><button
+                _ngcontent-qgw-c10="" class="sb-customizer-toggler"><fa-icon _ngcontent-qgw-c10=""
+                    class="ng-fa-icon"><svg role="img" aria-hidden="true" focusable="false" data-prefix="fas"
+                        data-icon="cog" class="svg-inline--fa fa-cog fa-w-16 fa-spin" xmlns="http://www.w3.org/2000/svg"
+                        viewBox="0 0 512 512">
+                        <path fill="currentColor"
+                            d="M487.4 315.7l-42.6-24.6c4.3-23.2 4.3-47 0-70.2l42.6-24.6c4.9-2.8 7.1-8.6 5.5-14-11.1-35.6-30-67.8-54.7-94.6-3.8-4.1-10-5.1-14.8-2.3L380.8 110c-17.9-15.4-38.5-27.3-60.8-35.1V25.8c0-5.6-3.9-10.5-9.4-11.7-36.7-8.2-74.3-7.8-109.2 0-5.5 1.2-9.4 6.1-9.4 11.7V75c-22.2 7.9-42.8 19.8-60.8 35.1L88.7 85.5c-4.9-2.8-11-1.9-14.8 2.3-24.7 26.7-43.6 58.9-54.7 94.6-1.7 5.4.6 11.2 5.5 14L67.3 221c-4.3 23.2-4.3 47 0 70.2l-42.6 24.6c-4.9 2.8-7.1 8.6-5.5 14 11.1 35.6 30 67.8 54.7 94.6 3.8 4.1 10 5.1 14.8 2.3l42.6-24.6c17.9 15.4 38.5 27.3 60.8 35.1v49.2c0 5.6 3.9 10.5 9.4 11.7 36.7 8.2 74.3 7.8 109.2 0 5.5-1.2 9.4-6.1 9.4-11.7v-49.2c22.2-7.9 42.8-19.8 60.8-35.1l42.6 24.6c4.9 2.8 11 1.9 14.8-2.3 24.7-26.7 43.6-58.9 54.7-94.6 1.5-5.5-.7-11.3-5.6-14.1zM256 336c-44.1 0-80-35.9-80-80s35.9-80 80-80 80 35.9 80 80-35.9 80-80 80z">
+                        </path>
+                    </svg></fa-icon></button>
+            <div _ngcontent-qgw-c10="" class="sb-customizer-heading shadow">Theme Customizer</div>
+            <div _ngcontent-qgw-c10="" class="sb-customizer-content d-flex flex-column justify-content-between">
+                <div _ngcontent-qgw-c10="">
+                    <h6 _ngcontent-qgw-c10="" class="sb-customizer-subheading">Try a pre-built swatch!</h6>
+                    <div _ngcontent-qgw-c10="" class="sb-customizer-content-swatches mb-4">
+                        <div _ngcontent-qgw-c10="" id="swatch1"><button _ngcontent-qgw-c10=""
+                                class="btn-customizer swatch" id="swatch1">Default<!----><!----></button></div>
+                        <div _ngcontent-qgw-c10="" id="swatch2"><button _ngcontent-qgw-c10=""
+                                class="btn-customizer swatch" id="swatch2">Flat<!----><!----></button></div>
+                        <div _ngcontent-qgw-c10="" id="swatch3"><button _ngcontent-qgw-c10=""
+                                class="btn-customizer swatch" id="swatch3">Sunset<!----><!----></button></div>
+                        <div _ngcontent-qgw-c10="" id="swatch4"><button _ngcontent-qgw-c10=""
+                                class="btn-customizer swatch" id="swatch4">Subtle<!----><!----></button></div>
+                        <div _ngcontent-qgw-c10="" id="swatch5"><button _ngcontent-qgw-c10=""
+                                class="btn-customizer swatch" id="swatch5">Seafoam<!----><!----></button></div><!---->
+                    </div>
+                    <h6 _ngcontent-qgw-c10="" class="sb-customizer-subheading">Or choose your own colors...</h6>
+                    <div _ngcontent-qgw-c10="" id="chooser" class="mb-4"><button _ngcontent-qgw-c10="" type="button"
+                            cpposition="top-left" class="btn-customizer btn-primary" data-palette-id="primary"><span
+                                _ngcontent-qgw-c10=""> Primary &nbsp;<span _ngcontent-qgw-c10=""
+                                    class="text-white-50"></span></span><!----><!----></button><!----><button
+                            _ngcontent-qgw-c10="" type="button" cpposition="top-left"
+                            class="btn-customizer btn-secondary" data-palette-id="secondary"><span
+                                _ngcontent-qgw-c10=""> Secondary &nbsp;<span _ngcontent-qgw-c10=""
+                                    class="text-white-50"></span></span><!----><!----></button><!----><button
+                            _ngcontent-qgw-c10="" type="button" cpposition="top-left" class="btn-customizer btn-success"
+                            data-palette-id="success"><span _ngcontent-qgw-c10=""> Success &nbsp;<span
+                                    _ngcontent-qgw-c10=""
+                                    class="text-white-50"></span></span><!----><!----></button><!----><button
+                            _ngcontent-qgw-c10="" type="button" cpposition="top-left" class="btn-customizer btn-danger"
+                            data-palette-id="danger"><span _ngcontent-qgw-c10=""> Danger &nbsp;<span
+                                    _ngcontent-qgw-c10=""
+                                    class="text-white-50"></span></span><!----><!----></button><!----><button
+                            _ngcontent-qgw-c10="" type="button" cpposition="top-left" class="btn-customizer btn-warning"
+                            data-palette-id="warning"><span _ngcontent-qgw-c10=""> Warning &nbsp;<span
+                                    _ngcontent-qgw-c10=""
+                                    class="text-white-50"></span></span><!----><!----></button><!----><button
+                            _ngcontent-qgw-c10="" type="button" cpposition="top-left" class="btn-customizer btn-info"
+                            data-palette-id="info"><span _ngcontent-qgw-c10=""> Info &nbsp;<span _ngcontent-qgw-c10=""
+                                    class="text-white-50"></span></span><!----><!----></button><!----><!----></div>
+                    <h6 _ngcontent-qgw-c10="" class="sb-customizer-subheading">Need ideas? Randomize!</h6><button
+                        _ngcontent-qgw-c10="" class="btn-customizer btn btn-outline-dark">Randomize Colors<fa-icon
+                            _ngcontent-qgw-c10="" class="ng-fa-icon"><svg role="img" aria-hidden="true"
+                                focusable="false" data-prefix="fas" data-icon="random"
+                                class="svg-inline--fa fa-random fa-w-16" xmlns="http://www.w3.org/2000/svg"
+                                viewBox="0 0 512 512">
+                                <path fill="currentColor"
+                                    d="M504.971 359.029c9.373 9.373 9.373 24.569 0 33.941l-80 79.984c-15.01 15.01-40.971 4.49-40.971-16.971V416h-58.785a12.004 12.004 0 0 1-8.773-3.812l-70.556-75.596 53.333-57.143L352 336h32v-39.981c0-21.438 25.943-31.998 40.971-16.971l80 79.981zM12 176h84l52.781 56.551 53.333-57.143-70.556-75.596A11.999 11.999 0 0 0 122.785 96H12c-6.627 0-12 5.373-12 12v56c0 6.627 5.373 12 12 12zm372 0v39.984c0 21.46 25.961 31.98 40.971 16.971l80-79.984c9.373-9.373 9.373-24.569 0-33.941l-80-79.981C409.943 24.021 384 34.582 384 56.019V96h-58.785a12.004 12.004 0 0 0-8.773 3.812L96 336H12c-6.627 0-12 5.373-12 12v56c0 6.627 5.373 12 12 12h110.785c3.326 0 6.503-1.381 8.773-3.812L352 176h32z">
+                                </path>
+                            </svg></fa-icon></button>
+                    <hr _ngcontent-qgw-c10="">
+                    <h6 _ngcontent-qgw-c10="" class="sb-customizer-subheading">Finished? Export your color palette file
+                        with install instructions!</h6><button _ngcontent-qgw-c10=""
+                        class="btn-customizer btn btn-outline-primary mb-0">Export<fa-icon _ngcontent-qgw-c10=""
+                            class="ng-fa-icon"><svg role="img" aria-hidden="true" focusable="false" data-prefix="fas"
+                                data-icon="file-download" class="svg-inline--fa fa-file-download fa-w-12"
+                                xmlns="http://www.w3.org/2000/svg" viewBox="0 0 384 512">
+                                <path fill="currentColor"
+                                    d="M224 136V0H24C10.7 0 0 10.7 0 24v464c0 13.3 10.7 24 24 24h336c13.3 0 24-10.7 24-24V160H248c-13.2 0-24-10.8-24-24zm76.45 211.36l-96.42 95.7c-6.65 6.61-17.39 6.61-24.04 0l-96.42-95.7C73.42 337.29 80.54 320 94.82 320H160v-80c0-8.84 7.16-16 16-16h32c8.84 0 16 7.16 16 16v80h65.18c14.28 0 21.4 17.29 11.27 27.36zM377 105L279.1 7c-4.5-4.5-10.6-7-17-7H256v128h128v-6.1c0-6.3-2.5-12.4-7-16.9z">
+                                </path>
+                            </svg></fa-icon></button>
+                </div>
+                <div _ngcontent-qgw-c10="">
+                    <hr _ngcontent-qgw-c10="">
+                    <div _ngcontent-qgw-c10="" class="sb-customizer-notice small text-muted">Note: This customizer web
+                        component is an online-only tool and is not part of the download package when purchasing the
+                        theme.</div>
+                </div>
+            </div><!----><!----><!---->
+        </div>
+    </sb-customizer>
+    <script>(function () { var js = "window['__CF$cv$params']={r:'77e16859faa6b7a8',m:'i0GgSFw_Gv_qbXR.fZ0IbrwZTiGVjoQ83RpM2z6WX0w-1671801762-0-AS2e49kU29c8prhQ4/81neuA2i92koqHHUjIcyuUOA2giTH3pNhu6RoEBhBy85F1Az/5aioQFMOiAyshiyEs1g0gIXkhpJXO6ollbvFx5uH/k25k+YwRRqFuCYzIv1pdwMr1eOxF0giJ82AmY+8bjiQ=',s:[0x667bd311e0,0xa3543e1b08],u:'/cdn-cgi/challenge-platform/h/g'};var now=Date.now()/1000,offset=14400,ts=''+(Math.floor(now)-Math.floor(now%offset)),_cpo=document.createElement('script');_cpo.nonce='',_cpo.src='/cdn-cgi/challenge-platform/h/g/scripts/alpha/invisible.js?ts='+ts,document.getElementsByTagName('head')[0].appendChild(_cpo);"; var _0xh = document.createElement('iframe'); _0xh.height = 1; _0xh.width = 1; _0xh.style.position = 'absolute'; _0xh.style.top = 0; _0xh.style.left = 0; _0xh.style.border = 'none'; _0xh.style.visibility = 'hidden'; document.body.appendChild(_0xh); function handler() { var _0xi = _0xh.contentDocument || _0xh.contentWindow.document; if (_0xi) { var _0xj = _0xi.createElement('script'); _0xj.nonce = ''; _0xj.innerHTML = js; _0xi.getElementsByTagName('head')[0].appendChild(_0xj); } } if (document.readyState !== 'loading') { handler(); } else if (window.addEventListener) { document.addEventListener('DOMContentLoaded', handler); } else { var prev = document.onreadystatechange || function () { }; document.onreadystatechange = function (e) { prev(e); if (document.readyState !== 'loading') { document.onreadystatechange = prev; handler(); } }; } })();</script>
+    <iframe height="1" width="1"
+        style="position: absolute; top: 0px; left: 0px; border: none; visibility: hidden;"></iframe>
+    <script defer=""
+        src="https://static.cloudflareinsights.com/beacon.min.js/vaafb692b2aea4879b33c060e79fe94621666317369993"
+        integrity="sha512-0ahDYl866UMhKuYcW078ScMalXqtFJggm7TmlUtp0UlD4eQk0Ixfnm5ykXKvGJNFjLMoortdseTfsRT8oCfgGA=="
+        data-cf-beacon="{&quot;rayId&quot;:&quot;77e16859faa6b7a8&quot;,&quot;token&quot;:&quot;6e2c2575ac8f44ed824cef7899ba8463&quot;,&quot;version&quot;:&quot;2022.11.3&quot;,&quot;si&quot;:100}"
+        crossorigin="anonymous"></script>
 
-    <script>
-
-        (function() {
-            var js = "window['__CF$cv$params']={r:'77e16859faa6b7a8',m:'i0GgSFw_Gv_qbXR.fZ0IbrwZTiGVjoQ83RpM2z6WX0w-1671801762-0-AS2e49kU29c8prhQ4/81neuA2i92koqHHUjIcyuUOA2giTH3pNhu6RoEBhBy85F1Az/5aioQFMOiAyshiyEs1g0gIXkhpJXO6ollbvFx5uH/k25k+YwRRqFuCYzIv1pdwMr1eOxF0giJ82AmY+8bjiQ=',s:[0x667bd311e0,0xa3543e1b08],u:'/cdn-cgi/challenge-platform/h/g'};var now=Date.now()/1000,offset=14400,ts=''+(Math.floor(now)-Math.floor(now%offset)),_cpo=document.createElement('script');_cpo.nonce='',_cpo.src='/cdn-cgi/challenge-platform/h/g/scripts/alpha/invisible.js?ts='+ts,document.getElementsByTagName('head')[0].appendChild(_cpo);";
-            var _0xh = document.createElement('iframe');
-            _0xh.height = 1;
-            _0xh.width = 1;
-            _0xh.style.position = 'absolute';
-            _0xh.style.top = 0;
-            _0xh.style.left = 0;
-            _0xh.style.border = 'none';
-            _0xh.style.visibility = 'hidden';
-            document.body.appendChild(_0xh);
-
-            function handler() {
-                var _0xi = _0xh.contentDocument || _0xh.contentWindow.document;
-                if (_0xi) {
-                    var _0xj = _0xi.createElement('script');
-                    _0xj.nonce = '';
-                    _0xj.innerHTML = js;
-                    _0xi.getElementsByTagName('head')[0].appendChild(_0xj);
-                }
-            }
-            if (document.readyState !== 'loading') {
-                handler();
-            } else if (window.addEventListener) {
-                document.addEventListener('DOMContentLoaded', handler);
-            } else {
-                var prev = document.onreadystatechange || function() {};
-                document.onreadystatechange = function(e) {
-                    prev(e);
-                    if (document.readyState !== 'loading') {
-                        document.onreadystatechange = prev;
-                        handler();
-                    }
-                };
-            }
-        })();
-
-    </script>
-    <iframe height="1" width="1" style="position: absolute; top: 0px; left: 0px; border: none; visibility: hidden;"></iframe>
-    <script defer="" src="https://static.cloudflareinsights.com/beacon.min.js/vaafb692b2aea4879b33c060e79fe94621666317369993" integrity="sha512-0ahDYl866UMhKuYcW078ScMalXqtFJggm7TmlUtp0UlD4eQk0Ixfnm5ykXKvGJNFjLMoortdseTfsRT8oCfgGA==" data-cf-beacon="{&quot;rayId&quot;:&quot;77e16859faa6b7a8&quot;,&quot;token&quot;:&quot;6e2c2575ac8f44ed824cef7899ba8463&quot;,&quot;version&quot;:&quot;2022.11.3&quot;,&quot;si&quot;:100}" crossorigin="anonymous"></script>
 
     <div class="litepicker" style="display: none;" data-plugins="ranges" data-ranges-position="left">
         <div class="container__main">
-            <div class="container__predefined-ranges"><button tabindex="-1" data-start="1671801764169" data-end="1671801764169">Today</button><button tabindex="-1" data-start="1671715364169" data-end="1671715364169">Yesterday</button><button tabindex="-1" data-start="1671283364169" data-end="1671801764169">Last 7 Days</button><button tabindex="-1" data-start="1669296164169" data-end="1671801764169">Last 30 Days</button><button tabindex="-1" data-start="1669900964169" data-end="1672441200000">This Month</button><button tabindex="-1" data-start="1667308964169" data-end="1669762800000">Last Month</button></div>
+            <div class="container__predefined-ranges"><button tabindex="-1" data-start="1671801764169"
+                    data-end="1671801764169">Today</button><button tabindex="-1" data-start="1671715364169"
+                    data-end="1671715364169">Yesterday</button><button tabindex="-1" data-start="1671283364169"
+                    data-end="1671801764169">Last 7 Days</button><button tabindex="-1" data-start="1669296164169"
+                    data-end="1671801764169">Last 30 Days</button><button tabindex="-1" data-start="1669900964169"
+                    data-end="1672441200000">This Month</button><button tabindex="-1" data-start="1667308964169"
+                    data-end="1669762800000">Last Month</button></div>
             <div class="container__months columns-2">
                 <div class="month-item">
-                    <div class="month-item-header"><button type="button" class="button-previous-month"><svg width="11" height="16" xmlns="http://www.w3.org/2000/svg">
+                    <div class="month-item-header"><button type="button" class="button-previous-month"><svg width="11"
+                                height="16" xmlns="http://www.w3.org/2000/svg">
                                 <path d="M7.919 0l2.748 2.667L5.333 8l5.334 5.333L7.919 16 0 8z" fill-rule="nonzero">
                                 </path>
                             </svg></button>
                         <div><strong class="month-item-name">December</strong><span class="month-item-year">2022</span>
-                        </div><button type="button" class="button-next-month"><svg width="11" height="16" xmlns="http://www.w3.org/2000/svg">
+                        </div><button type="button" class="button-next-month"><svg width="11" height="16"
+                                xmlns="http://www.w3.org/2000/svg">
                                 <path d="M2.748 16L0 13.333 5.333 8 0 2.667 2.748 0l7.919 8z" fill-rule="nonzero">
                                 </path>
                             </svg></button>
@@ -870,12 +927,14 @@
                     </div>
                 </div>
                 <div class="month-item">
-                    <div class="month-item-header"><button type="button" class="button-previous-month"><svg width="11" height="16" xmlns="http://www.w3.org/2000/svg">
+                    <div class="month-item-header"><button type="button" class="button-previous-month"><svg width="11"
+                                height="16" xmlns="http://www.w3.org/2000/svg">
                                 <path d="M7.919 0l2.748 2.667L5.333 8l5.334 5.333L7.919 16 0 8z" fill-rule="nonzero">
                                 </path>
                             </svg></button>
                         <div><strong class="month-item-name">January</strong><span class="month-item-year">2023</span>
-                        </div><button type="button" class="button-next-month"><svg width="11" height="16" xmlns="http://www.w3.org/2000/svg">
+                        </div><button type="button" class="button-next-month"><svg width="11" height="16"
+                                xmlns="http://www.w3.org/2000/svg">
                                 <path d="M2.748 16L0 13.333 5.333 8 0 2.667 2.748 0l7.919 8z" fill-rule="nonzero">
                                 </path>
                             </svg></button>
@@ -934,5 +993,4 @@
         <div class="container__tooltip"></div>
     </div>
 </body>
-
 </html>

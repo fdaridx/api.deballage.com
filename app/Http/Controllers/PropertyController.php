@@ -34,9 +34,7 @@ class PropertyController extends Controller
         }
 
         if (count($messages) == 0) {
-            $property = Property::firstOrCreate([
-                'atribute_id' => $request->atribute_id
-            ], [
+            $property = Property::create([
                 'atribute_id' => $request->atribute_id,
                 'value' => strtolower($request->value),
             ]);

@@ -75,6 +75,18 @@ async function redirect(url, param = {}, authenticable = true) {
 
 $(function () {
     isNumeric();
+    try {
+        const panelSlider = document.querySelector('.panel-slider');
+        const closeButton = document.getElementById('closeButton');
+        const openButton = document.getElementById('openButton');
+
+        openButton.addEventListener("click", () => {
+            panelSlider.classList.add('active')
+        });
+        closeButton.addEventListener("click", () => {
+            panelSlider.classList.remove('active')
+        })
+    } catch (error) { }
 });
 
 $(document).on('alpine:init', function () {

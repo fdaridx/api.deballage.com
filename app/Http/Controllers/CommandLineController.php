@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\CartLine;
 use App\Models\CommandLine;
 use App\Models\Notification;
+use App\Models\Shop;
 use Illuminate\Http\Request;
 
 class CommandLineController extends Controller
@@ -21,6 +22,30 @@ class CommandLineController extends Controller
             return $commandline;
         });
         return response()->json($commandlines, 200);
+    }
+
+    public function userindex(Shop $shop)
+    {
+        $commandlines = CommandLine::with(['command' => function($query) {
+            return $query->with(['user', 'qwater' => function ($query) {
+                $query->with(['city' => function ($query) {
+                    $query->with(['country']);
+                }]);
+            }]);
+        }, 'product' => function($query) {
+            return $query->with('shop');
+        }])->get()->map(function ($commandline) {
+            $commandline->state_url = route('user.commandes.state', $commandline->id);
+            return $commandline;
+        });
+
+        $items = [];
+
+        foreach ($commandlines as $commandline) {
+            if ($commandline->product->shop->is($shop)) $items[] = $commandline;
+        }
+
+        return response()->json($items, 200);
     }
 
     public function create()
@@ -139,7 +164,7 @@ class CommandLineController extends Controller
                 $commandLine->update(['state' => 'disabled', 'delivered_at' => now()]);
 
                 // On modifie ici l'etat de la commande si toutes ses lignes de commande sont à disabled
-                $commandLine->command->commandlines->where('state', 'disabled')->all()->count() 
+                count($commandLine->command->commandlines->where('state', 'disabled')->all()) 
                 !== $commandLine->command->commandlines()->count() ?: $commandLine->command->update(['state' => 'disabled']);
 
                 // Ensuite on recherche la ligne du panier correspondant à la ligne de la commande qu'on supprimera

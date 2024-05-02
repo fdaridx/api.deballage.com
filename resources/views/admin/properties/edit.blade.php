@@ -26,7 +26,7 @@
                         <div class="mb-3">
                             <label class="small mb-1">attributes</label>
                             <select class="form-select" aria-label="Default select example" id="atribute_id" verify>
-                                <option value="{{ $property->attribute_id }}">{{ ucwords($property->attribute->name) }}</option>
+                                <option selected value="{{ $property->attribute_id }}">{{ ucwords($property->attribute->name) }}</option>
                                 <option disabled="">
                                     Select a atribute :
                                 </option>

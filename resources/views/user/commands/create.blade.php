@@ -6,8 +6,7 @@
             <div class="row align-items-center justify-content-between pt-3">
                 <div class="col-auto mb-3">
                     <h1 class="page-header-title">
-
-                        Modify Product
+                        Add new Product
                     </h1>
                 </div>
             </div>
@@ -19,15 +18,13 @@
     <div class="row">
         <div class="col-lg-8">
             <div class="card mb-4">
-                <div class="card-header">user</div>
+                <div class="card-header">product</div>
                 <div class="card-body">
-                    <form>
-                        <input hidden value="{{ $product->id }}" id="id">
+                    <form enctype="multipart/form-data">
                         <div class="mb-3">
                             <label class="small mb-1">Categories</label>
                             <select class="form-select" aria-label="Default select example" id="category_id">
-                                <option selected value="{{ $product->category_id }}">{{ ucwords($product->category->name) }}</option>
-                                <option disabled="">
+                                <option selected="" disabled="">
                                     Select a categorie :
                                 </option>
                                 @foreach ($categories as $category)
@@ -39,8 +36,7 @@
                         <div class="mb-3">
                             <label class="small mb-1">shop</label>
                             <select class="form-select" aria-label="Default select example" id="shop_id">
-                                <option selected value="{{ $product->shop_id }}">{{ ucwords($product->shop->intitule) }}</option>
-                                <option  disabled="">
+                                <option selected="" disabled="">
                                     Select a shop :
                                 </option>
                                 @foreach ($shops as $shop)
@@ -51,22 +47,22 @@
 
                         <div class="mb-3">
                             <label class="small mb-1" for="price">price</label>
-                            <input class="form-control" id="price" type="text" name="price" value="{{ $product->price }}" />
+                            <input class="form-control" id="price" type="text" name="price" />
                         </div>
 
                         <div class="mb-3">
                             <label class="small mb-1" for="special_rice">special price</label>
-                            <input class="form-control" id="special_price" type="text" name="special_price" value="{{ $product->special_price }}"/>
+                            <input class="form-control" id="special_rice" type="text" name="special_rice" />
                         </div>
 
                         <div class="mb-3">
                             <label class="small mb-1" for="name">name</label>
-                            <input class="form-control" id="name" type="text" name="name" value="{{ $product->name }}"/>
+                            <input class="form-control" id="name" type="text" name="name" />
                         </div>
 
                         <div class="mb-3">
                             <label class="small mb-1" for="description">description</label>
-                            <textarea class="form-control" id="description" type="text" name="description" rows="3">{{ $product->description }}</textarea>
+                            <textarea class="form-control" id="description" type="text" name="description" rows="3"></textarea>
                         </div>
 
                         <div class="mb-3">
@@ -74,7 +70,20 @@
                             <input multiple class="form-control" id="images" type="file"/>
                         </div>
 
-                        <a id="save" class="btn btn-primary">Save</a>
+                        {{-- <div class="mb-3">
+                            <label class="small mb-1">info</label>
+                            <select class="form-select" aria-label="Default select example" name="info[]">
+                                <option selected="" disabled="">
+                                    Select a info :
+                                </option>
+                                <option value="administrator">Administrator</option>
+                                <option value="registered">Registered</option>
+                            </select>
+                        </div> --}}
+
+                        <a class="btn btn-primary" id="save">
+                            Save
+                        </a>
                     </form>
                 </div>
             </div>
@@ -82,34 +91,28 @@
     </div>
 </div>
 <script>
-    $(function () {
+    $(function() {
         $('#save').click(function(e) {
             e.preventDefault();
             if (verify() == 0) {
-                let formData = new FormData();
-                let i = 0;
-                for (const image of $('#images')[0].files) {
-                    formData.append('image_'+ i, image);
-                    i++;
-                }
+                const formData = new FormData();
 
-                formData.append('i', i);
-                formData.append('category_id', parseInt($('#category_id').val()));
+                formData.append('images', $('#images')[0].files[0]);
+                formData.append('category_id', $('#category_id').val());
                 formData.append('shop_id', $('#shop_id').val());
                 formData.append('price', $('#price').val());
                 formData.append('special_price', $('#special_price').val());
                 formData.append('name', $('#name').val());
                 formData.append('description', $('#description').val());
 
-                axios.post('/api/products/update/'+ $('#id').val(), formData, {
+                axios.post('/api/products', formData, {
                     headers: {
                         'Content-Type': 'multipart/form-data',
                     },
                 })
                 .then((response) => {
                     if (response.status === 200) {
-                        //redirect("{{ Route('products.index') }}");
-                        console.log(response.data);
+                        redirect("{{ Route('products.index') }}");
                     }
                 })
                 .catch((response) => { console.error(response); });

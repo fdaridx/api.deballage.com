@@ -20,6 +20,7 @@ use App\Http\Controllers\CommandLineController;
 use App\Http\Controllers\AtributeProductController;
 use App\Http\Controllers\ShopController;
 
+// Routes Admin
 // Users
     // route pour authentifier un utilisateur | Params: email, password
     Route::post('authenticate', [UserController::class, 'authenticate']); //verifié
@@ -312,7 +313,7 @@ use App\Http\Controllers\ShopController;
     Params: aucun
     */
     Route::get('/commandes', [CommandController::class, 'index']); //verifié
-
+    Route::get('/commandes/price', [CommandController::class, 'price']); //verifié
 
     /* route pour la liste des commandes | Contraintes: admin et seller
     Params: state(optionel et prend les valeurs init, enabled et diasbled)
@@ -378,21 +379,77 @@ use App\Http\Controllers\ShopController;
 
     
 // Attribut de produit
-        /* route pour la liste des attributs d'un produit| Contraintes: admin et seller 
-        Params: id du produit
-        */ 
-        Route::get('/attributeProducts/{product}', [AtributeProductController::class, 'index']); //verifié
+    /* route pour la liste des attributs d'un produit| Contraintes: admin et seller 
+    Params: id du produit
+    */ 
+    Route::get('/attributeProducts/{product}', [AtributeProductController::class, 'index']); //verifié
 
 
-        /* route pour enregistrer un attribut de produit| Contraintes: admin et seller 
-        Params: atribute_id, product_id
-        */ 
-        Route::post('/attributeProducts', [AtributeProductController::class, 'store']); //verifié
-        Route::delete('/attributeProducts/delete/{attributeproduct}', [AtributeProductController::class, 'destroy']); //verifié
+    /* route pour enregistrer un attribut de produit| Contraintes: admin et seller 
+    Params: atribute_id, product_id
+    */ 
+    Route::post('/attributeProducts', [AtributeProductController::class, 'store']); //verifié
+    Route::delete('/attributeProducts/delete/{attributeproduct}', [AtributeProductController::class, 'destroy']); //verifié
 
 
 
-Route::middleware('auth:sanctum')->group(function () {  
+
+
+// Routes Users
+// Attribut de produit
+    /* route pour la liste des attributs d'un produit| Contraintes: admin et seller 
+    Params: id du produit
+    */ 
+    Route::get('/user/attributeProducts/{product}', [AtributeProductController::class, 'userindex']); //verifié
+
+
+    /* route pour enregistrer un attribut de produit| Contraintes: admin et seller 
+    Params: atribute_id, product_id
+    */ 
+    Route::post('/user/attributeProducts', [AtributeProductController::class, 'userstore']); //verifié
+
+
+    Route::get('/user/commandlines/{shop}', [CommandLineController::class, 'userindex']); //verifié
+    
+// Products
+    /* route pour afficher la liste des produits | Contraintes: tout le monde 
+    Params: aucun
+    */
+    Route::get('/user/products', [ProductController::class, 'userindex']); //verifié
+
+
+    /* route pour ajouter un produits | Contraintes: seller
+    Params: category_id, shop_id, name, description, price, special_price, 
+    info(informations supplementaire du produit sous forme de tableau associatif Ex: ['size' => 'm', 'couleur' => 'noir',])
+    */
+    Route::post('/user/products', [ProductController::class, 'userstore']); //verifié
+
+    /* route pour afficher un produit | Contraintes: tout le monde
+    Params: id (du produit)
+    */
+    Route::get('/user/products/show/{product}', [ProductController::class, 'usershow']); //verifié
+
+
+    /* route pour afficher les produits en fonction d'un champ | Contraintes: tout le monde
+    Params: option (qui est un tableau par Ex si on veut les produits appartenant à une categorie option aura comme contenu
+    ['category_id' => 1])
+    */
+    Route::get('/user/products/options/{option}', [ProductController::class, 'option']); //verifié
+
+    /* route pour modifier un produit | Contraintes: seller
+    Params:id(du produit à modifier), category_id, shop_id, name, description, price, special_price, 
+    info(informations supplementaire du produit sous forme de tableau associatif Ex: ['size' => 'm', 'couleur' => 'noir',])
+    */
+    Route::post('/user/products/update/{product}', [ProductController::class, 'userupdate']); //verifié
+
+    /* route pour changer l'etat d'un produit | Contraintes: tout le monde
+    Params: id du produit et le state 
+    */
+    Route::get('/user/products/state/{product}/{state}', [ProductController::class, 'state']); //verifié
+
+    Route::delete('/user/products/delete/{product}', [ProductController::class, 'userdestroy']); //verifié
+
+    Route::middleware('auth:sanctum')->group(function () {  
     
     // Users
         /* route pour changer le mot de passe d'un utilisateur grace à son id | Contraintes: tout le monde à condition que l'action soit pour soi et l'admin
@@ -408,6 +465,9 @@ Route::middleware('auth:sanctum')->group(function () {
         Params: product_id, cart_id, quantity, attributesValues
         */
         Route::post('/cartlines/store', [CartLineController::class, 'store']); // verifié   
-});
+
+
+
+    });
 
 

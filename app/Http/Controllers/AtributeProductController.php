@@ -21,12 +21,53 @@ class AtributeProductController extends Controller
         }])->where('id', $product->id)->first()->attributes, 200);
     }
 
+    public function userindex(Product $product)
+    {
+        return response()->json($product->with(['category', 'shop', 'attributes' => function ($query) {
+            $query->select([
+                'atributes.*', 
+                DB::raw('CONCAT("/attributes/edit/", atributes.id) AS edit')
+            ]);
+        }])->where('id', $product->id)->first()->attributes, 200);
+    }
+
     public function create()
     {
         //
     }
 
     public function store(Request $request)
+    {
+        $messages = [];
+        if ($request->attribute_id == null || empty($request->attribute_id)) {
+            $messages[] = "Veuillez renseigner un attribut";
+        }
+
+        if ($request->product_id == null || empty($request->attribute_id)) {
+            $messages[] = "Veuillez renseigner un produit";
+        }
+
+        if (count($messages) == 0) {
+            $atributeProduct = AtributeProduct::firstOrCreate([
+                'atribute_id' => intval($request->attribute_id),
+                'product_id' => $request->product_id,
+            ], [
+                'atribute_id' => intval($request->attribute_id),
+                'product_id' => $request->product_id,
+            ]);
+
+            if ($atributeProduct->wasRecentlyCreated) {
+                return response()->json(['message' => 'Attribut de produit crée avec succès !'], 200);
+            } else {
+                return response()->json(['message' => 'Cet Attribut pour ce produit existe déjà !'], 500);
+            }
+            
+        } else {
+            return response()->json(['messages' => $messages], 500);
+        }
+    }
+
+    public function userstore(Request $request)
     {
         $messages = [];
         if ($request->attribute_id == null || empty($request->attribute_id)) {
@@ -77,4 +118,5 @@ class AtributeProductController extends Controller
         $attributeproduct->delete();
         return response(200);
     }
+
 }

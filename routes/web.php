@@ -49,9 +49,7 @@ Route::get('/product/{id}', function ($id) {
 });
 
 Route::get('/user-dashboard', function () {
-    return view('admin.user-dashboard',[
-        'categories' => Category::orderByDesc('id')->get(),
-    ]);
+    return view('admin.user-dashboard');
 })->name('user-dashboard');
 
 
@@ -124,7 +122,7 @@ Route::get('/user-dashboard', function () {
             'attributes' => Atribute::orderByDesc('id')->get()
         ]); })->name('create');
         Route::get('/edit/{property}', function (Property $property) { return view('admin.properties.edit',[
-            'attributes' => Atribute::whereNotIn('id',[$property->atribute_id])->get(),
+            'attributes' => Atribute::orderByDesc('id')->get(),
             'property' => $property,
         ]); })->name('edit');
     });
@@ -185,6 +183,35 @@ Route::get('/user-dashboard', function () {
         Route::get('/', function () { return view('admin.payments.index'); })->name('index');
         Route::get('/create', function () { return view('admin.payments.create'); })->name('create');
         Route::get('/edit/{payment}', function (Payment $payment) { return view('admin.payments.edit', compact('payment')); })->name('edit');
+    });
+
+    Route::prefix('/user')->name('user.')->group(function(){
+        Route::prefix('/products')->name('products.')->group(function(){
+            Route::get('/', function () { return view('user.products.index'); })->name('index');
+            Route::get('/create', function () { return view('user.products.create',[
+                'categories' => Category::orderByDesc('id')->get(),
+                'shops' => Shop::orderByDesc('id')->get(),
+            ]); })->name('create');
+            Route::get('/edit/{product}', function (Product $product) { return view('user.products.edit',[
+                'categories' => Category::orderByDesc('id')->get(),
+                'shops' => Shop::orderByDesc('id')->get(),
+                'product' => $product,
+            ]); })->name('edit');
+            Route::get('/attributes/{product}', function (Product $product) { return view('user.products.attribute_list', compact('product')); })->name('attribute');
+            Route::get('/attributes/create/{product}', function (Product $product) { 
+                return view('user.products.attribute_create', [
+                    'attributes' => Atribute::orderByDesc('id')->get(),
+                    'product' => $product,
+                ]); 
+            })->name('attribute_create');
+        });
+
+        Route::prefix('/commandes')->name('commandes.')->group(function(){
+            Route::get('/', function () { return view('user.commands.index'); })->name('index');
+            Route::get('/create', function () { return view('user.commands.create'); })->name('create');
+            Route::get('/state/{commandline}', function (Command $commandline) { return view('user.commands.state', compact('commandline')); })->name('state');
+        });
+
     });
 // });
 

@@ -1,4 +1,4 @@
-@extends('admin.app')
+@extends('admin.user-app')
 @section('content')
 <header class="page-header page-header-compact page-header-light border-bottom bg-white mb-4">
     <div class="container-xl px-4">
@@ -36,7 +36,7 @@
                             </select>
                         </div>
 
-                        <div class="mb-3">
+                        <div class="mb-3" hidden>
                             <label class="small mb-1">shop</label>
                             <select class="form-select" aria-label="Default select example" id="shop_id">
                                 <option selected value="{{ $product->shop_id }}">{{ ucwords($product->shop->intitule) }}</option>
@@ -51,17 +51,17 @@
 
                         <div class="mb-3">
                             <label class="small mb-1" for="price">price</label>
-                            <input class="form-control" id="price" type="text" name="price" value="{{ $product->price }}" />
+                            <input  class="form-control" id="price" type="text" name="price" value="{{ $product->price }}" />
                         </div>
 
                         <div class="mb-3">
                             <label class="small mb-1" for="special_rice">special price</label>
-                            <input class="form-control" id="special_price" type="text" name="special_price" value="{{ $product->special_price }}"/>
+                            <input  class="form-control" id="special_price" type="text" name="special_price" value="{{ $product->special_price }}"/>
                         </div>
 
                         <div class="mb-3">
                             <label class="small mb-1" for="name">name</label>
-                            <input class="form-control" id="name" type="text" name="name" value="{{ $product->name }}"/>
+                            <input  class="form-control" id="name" type="text" name="name" value="{{ $product->name }}"/>
                         </div>
 
                         <div class="mb-3">
@@ -85,35 +85,32 @@
     $(function () {
         $('#save').click(function(e) {
             e.preventDefault();
-            if (verify() == 0) {
-                let formData = new FormData();
-                let i = 0;
-                for (const image of $('#images')[0].files) {
-                    formData.append('image_'+ i, image);
-                    i++;
-                }
-
-                formData.append('i', i);
-                formData.append('category_id', parseInt($('#category_id').val()));
-                formData.append('shop_id', $('#shop_id').val());
-                formData.append('price', $('#price').val());
-                formData.append('special_price', $('#special_price').val());
-                formData.append('name', $('#name').val());
-                formData.append('description', $('#description').val());
-
-                axios.post('/api/products/update/'+ $('#id').val(), formData, {
-                    headers: {
-                        'Content-Type': 'multipart/form-data',
-                    },
-                })
-                .then((response) => {
-                    if (response.status === 200) {
-                        //redirect("{{ Route('products.index') }}");
-                        console.log(response.data);
-                    }
-                })
-                .catch((response) => { console.error(response); });
+            let formData = new FormData();
+            let i = 0;
+            for (const image of $('#images')[0].files) {
+                formData.append('image_'+ i, image);
+                i++;
             }
+
+            formData.append('i', i);
+            formData.append('category_id', parseInt($('#category_id').val()));
+            formData.append('shop_id', $('#shop_id').val());
+            formData.append('price', $('#price').val());
+            formData.append('special_price', $('#special_price').val());
+            formData.append('name', $('#name').val());
+            formData.append('description', $('#description').val());
+
+            axios.post('/api/user/products/update/'+ $('#id').val(), formData, {
+                headers: {
+                    'Content-Type': 'multipart/form-data',
+                },
+            })
+            .then((response) => {
+                if (response.status === 200) {
+                    redirect("{{ Route('user.products.index') }}");
+                }
+            })
+            .catch((response) => { console.error(response); });
         })
     })
 
